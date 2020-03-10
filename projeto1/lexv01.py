@@ -37,7 +37,7 @@ t_INT= r'int'
 t_FLOAT = r'float'
 
 
-t_CCOMMENT = r'/\*(.|\\n)*?/\*'
+t_CCOMMENT =r'/\*(.|\n)*?\*/'
 t_CPPCOMMENT = r'//.*'
 
 t_ICONST = r'[0-9]+'

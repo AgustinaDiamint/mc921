@@ -37,7 +37,7 @@ others = (
     "ERROR",
     "CCOMMENT",
     "CPPCOMMENT",
-    "UNTERMCOMMENT"
+    "UNTERMCOMMENT",
 )
 
 tokens = types + reserved + operators + constants + assigments + others

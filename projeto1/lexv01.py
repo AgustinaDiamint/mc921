@@ -37,6 +37,7 @@ others = (
     "ERROR",
     "CCOMMENT",
     "CPPCOMMENT",
+    "UNTERMCOMMENT"
 )
 
 tokens = types + reserved + operators + constants + assigments + others
@@ -60,21 +61,9 @@ reserved = {
     "float": "FLOAT",
 }
 
-t_FOR = r"for"
-t_WHILE = r"while"
-t_IF = r"IF"
-t_ASSERT = r"assert"
-t_PRINT = r"print"
-t_READ = r"read"
-t_BREAK = r"break"
-t_RETURN = r"return"
-t_VOID = r"void"
-t_CHAR = r" char"
-t_INT = r"int"
-t_FLOAT = r"float"
-
-
 t_CCOMMENT = r"/\*(.|\n)*?\*/"
+t_UNTERMCOMMENT = r"/\*(.|\n)*"
+
 t_CPPCOMMENT = r"//.*"
 
 t_ICONST = r"[0-9]+"
@@ -139,7 +128,7 @@ def t_error(t):
 from ply import lex
 
 lexer = lex.lex()
-sentence = "/* comment */ int j = 3; int main () {  int i = j;int k = 3;int p = 2 * j; assert p == 2 * i;}"
+sentence = "/* comment */ int j = 3; int main () {  int i = j;int k = 3;int p = 2 * j; assert p == 2 * i;}  /* asdasdas "
 
 # Give the lexer some input
 lexer.input(sentence)

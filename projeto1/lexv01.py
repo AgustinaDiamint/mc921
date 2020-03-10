@@ -38,8 +38,28 @@ others = (
     "CCOMMENT",
     "CPPCOMMENT",
 )
+
 tokens = types + reserved + operators + constants + assigments + others
+
+# REGEX
 # reserved words
+reserved = {
+    "if": "IF",
+    "then": "THEN",
+    "else": "ELSE",
+    "for": "FOR",
+    "while": "WHILE",
+    "assert": "ASSERT",
+    "print": "PRINT",
+    "read": "READ",
+    "break": "BREAK",
+    "return": "RETURN",
+    "void": "VOID",
+    "char": "CHAR",
+    "int": "INT",
+    "float": "FLOAT",
+}
+
 t_FOR = r"for"
 t_WHILE = r"while"
 t_IF = r"IF"
@@ -93,10 +113,16 @@ t_OR = r"\|\|"
 t_PP = r"\+\+"
 t_MM = r"\-\-"
 t_ADDRESS = r"\&"
-t_ID = r'[a-zA-Z_][0-9a-zA-Z_]*'
+
+
+def t_ID(t):
+    r"[a-zA-Z_][a-zA-Z_0-9]*"
+    t.type = reserved.get(t.value, "ID")  # Check for reserved words
+    return t
+
 
 # Ignored characters
-t_ignore = r"\t"
+t_ignore = r" \t"
 
 
 def t_newline(t):
@@ -113,8 +139,14 @@ def t_error(t):
 from ply import lex
 
 lexer = lex.lex()
-lexer.input(
-    "/* comment */ int j = 3; int main () {  int i = j;int k = 3;int p = 2 * j; assert p == 2 * i;}"
-)
-for tok in iter(lexer.token, None):
-    print(tok.type + " " + tok.value)
+sentence = "/* comment */ int j = 3; int main () {  int i = j;int k = 3;int p = 2 * j; assert p == 2 * i;}"
+
+# Give the lexer some input
+lexer.input(sentence)
+
+# Tokenize
+while True:
+    tok = lexer.token()
+    if not tok:
+        break  # No more input
+    print(tok)

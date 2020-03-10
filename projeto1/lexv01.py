@@ -93,10 +93,10 @@ t_OR = r"\|\|"
 t_PP = r"\+\+"
 t_MM = r"\-\-"
 t_ADDRESS = r"\&"
-
+t_ID = r'[a-zA-Z_][0-9a-zA-Z_]*'
 
 # Ignored characters
-t_ignore = " \t"
+t_ignore = r"\t"
 
 
 def t_newline(t):
@@ -117,4 +117,4 @@ lexer.input(
     "/* comment */ int j = 3; int main () {  int i = j;int k = 3;int p = 2 * j; assert p == 2 * i;}"
 )
 for tok in iter(lexer.token, None):
-    print(tok.type + tok.value)
+    print(tok.type + " " + tok.value)

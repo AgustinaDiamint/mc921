@@ -34,6 +34,8 @@ others = (
     "RBRACK",
     "LBRACK",
     "SEMI",
+    "STRING_LITERAL",
+    "UNMATCHEDQUOTE"
     "ERROR",
     "CCOMMENT",
     "CPPCOMMENT",
@@ -61,10 +63,28 @@ reserved = {
     "float": "FLOAT",
 }
 
-t_CCOMMENT = r"/\*(.|\n)*?\*/"
-t_UNTERMCOMMENT = r"/\*(.|\n)*"
+def t_CCOMMENT(t):
+    r"/\*(.|\n)*?\*/"
+    pass
 
-t_CPPCOMMENT = r"//.*"
+def t_UNTERMCOMMENT(t):
+    r"/\*(.|\n)*"
+    print("%d: Unterminated Comment" %t.lexer.lineno)
+
+
+def t_STRING_LITERAL(t) :
+    r"\"(.|\n)*?\""
+    return t
+
+
+def t_UNMATCHEDQUOTE(t):
+    r"\"(.|\n)*"
+    print("%d: Unmatched Quote " %t.lexer.lineno)
+
+
+def t_CPPCOMMENT(t):
+    r"//.*"
+    pass
 
 t_ICONST = r"[0-9]+"
 t_FCONST = r"([0-9]+\.[0-9]*)|([0-9]*\.[0-9]+)"
@@ -128,10 +148,14 @@ def t_error(t):
 from ply import lex
 
 lexer = lex.lex()
-sentence = "/* comment */ int j = 3; int main () {  int i = j;int k = 3;int p = 2 * j; assert p == 2 * i;}  /* asdasdas "
+
+with open('teste1') as f:
+    read_data = f.read()
+
+#sentence = "/* comment */ int j = 3; int main () {  int i = j;int k = 3;int p = 2 * j; assert p == 2 * i;}  /* asdasdas "
 
 # Give the lexer some input
-lexer.input(sentence)
+lexer.input(read_data)
 
 # Tokenize
 while True:

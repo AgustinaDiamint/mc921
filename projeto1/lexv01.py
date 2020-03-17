@@ -40,6 +40,7 @@ others = (
     "CCOMMENT",
     "CPPCOMMENT",
     "UNTERMCOMMENT",
+    "COMMA"
 )
 
 tokens = types + reserved + operators + constants + assigments + others
@@ -65,7 +66,7 @@ reserved = {
 
 def t_CCOMMENT(t):
     r"/\*(.|\n)*?\*/"
-    pass
+    t.lexer.lineno += t.value.count('\n')
 
 def t_UNTERMCOMMENT(t):
     r"/\*(.|\n)*"
@@ -123,6 +124,9 @@ t_PP = r"\+\+"
 t_MM = r"\-\-"
 t_ADDRESS = r"\&"
 
+def t_COMMA(t):
+    r","
+    return t
 
 def t_ID(t):
     r"[a-zA-Z_][a-zA-Z_0-9]*"
@@ -149,7 +153,7 @@ from ply import lex
 
 lexer = lex.lex()
 
-with open('teste1') as f:
+with open('projeto1/teste1') as f:
     read_data = f.read()
 
 #sentence = "/* comment */ int j = 3; int main () {  int i = j;int k = 3;int p = 2 * j; assert p == 2 * i;}  /* asdasdas "

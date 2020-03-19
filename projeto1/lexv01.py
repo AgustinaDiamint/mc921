@@ -62,7 +62,7 @@ reserved = {
     "char": "CHAR",
     "int": "INT",
     "float": "FLOAT",
-}
+} 
 
 def t_CCOMMENT(t):
     r"/\*(.|\n)*?\*/"

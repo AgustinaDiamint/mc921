@@ -22,7 +22,7 @@ operators = (
     "NOT",
 )
 
-constants = ("ICONST", "FCONST")
+constants = ("ICONST", "FCONST", "CCONST")
 
 assigments = ("ASSIGN", "TASSIGN", "DASSIGN", "MODASSIGN", "PASSIGN", "MINASSIGN")
 
@@ -92,7 +92,7 @@ def t_CPPCOMMENT(t):
 
 t_ICONST = r"[0-9]+"
 t_FCONST = r"([0-9]+\.[0-9]*)|([0-9]*\.[0-9]+)"
-
+t_CCONST = r"[a-zA-Z]"
 
 t_ASSIGN = r"\="
 t_TASSIGN = r"\*\="

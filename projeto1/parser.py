@@ -140,47 +140,64 @@ class Parser:
                         | MM unary_expression
                         | unary_operator cast_expression
         """
-        p[0] == p[1] if len(p) == 2 else (p[1], p[2])
+        p[0] = p[1] if len(p) == 2 else (p[1], p[2])
 
-    # TODO
     def p_postfix_expression(self, p):
         """
         postfix_expression : primary_expression
                             | postfix_expression [ expression ]
-                            | postfix_expression ( {assignment_expression}* )
+                            | postfix_expression ( assignment_expression_list_opt )
                             | postfix_expression PP
                             | postfix_expression MM
         """
+        if len(p) == 2:
+            p[0] = p[1]
+        elif len(p) == 5:
+            p[0] = (p[1],[3])
+        else:
+            p[0] = (p[1],p[2])
 
-    # TODO
     def p_primary_expression(self, p):
         """
         primary_expression : ID
-                            | <constant>
-                            | <string>
-                            | ( <expression> )
+                            | constant
+                            | string
+                            | ( expression )
         """
-
-    # TODO
+        p[0] = p[1] if len(p) == 2 else p[2]
+    #TODO
+    # o que é char const 
     def p_constant(self, p):
         """ constant: ICONST
-                    | <character_constant>
+                    | CCONST
                     | FCONST
         """
+        p[0] = p[1]
 
-    # TODO
     def p_expression(self, p):
         """ expression : assignment_expression
                         | expression , assignment_expression
         """
+        p[0] = p[1] if len(p) == 2 else (p[1], p[2])
 
-    # TODO
     def p_assignment_expression(self, p):
-        """assignment_expression> : <binary_expression>
+        """assignment_expression : binary_expression
                             | unary_expression assignment_operator assignment_expression
         """
+        p[0] = p[1] if len(p) == 2 else (p[1], p[2], p[3])
 
-    # TODO
+    def p_assignment_expression_list(self,p):
+        """ assignment_expression_list: assignment_expression_list assignment_expression
+                                    | assignment_expression
+        """
+        p[0] = [p[1]] if len(p) == 2 else p[1] + [p[2]]
+    
+    def assignment_expression_list_opt(self,p):
+        """ assignment_expression_list_opt: assignment_expresssion_list
+                                            | empty
+        """
+        p[0] = p[1]
+
     def p_assignment_operator(self, p):
         """ assignment_operator: EQ
                                 | TASSIGN
@@ -189,8 +206,8 @@ class Parser:
                                 | PASSIGN
                                 | MINASSIGN
         """
+        p[0] =('assignment_operator', p[1])
 
-    # TODO
     def p_unary_operator(self, p):
         """unary_operator : AND
                     | TIMES
@@ -198,7 +215,8 @@ class Parser:
                     | MINUS
                     | NOT
         """
-
+        p[0] = ('unary operator', p[1])
+        
     # TODO
     def p_parameter_list(self, p):
         """parameter_list : parameter_declaration

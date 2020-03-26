@@ -19,6 +19,7 @@ operators = (
     "PP",
     "MM",
     "ADDRESS",
+    "NOT",
 )
 
 constants = ("ICONST", "FCONST")
@@ -35,12 +36,11 @@ others = (
     "LBRACK",
     "SEMI",
     "STRING_LITERAL",
-    "UNMATCHEDQUOTE"
-    "ERROR",
+    "UNMATCHEDQUOTE" "ERROR",
     "CCOMMENT",
     "CPPCOMMENT",
     "UNTERMCOMMENT",
-    "COMMA"
+    "COMMA",
 )
 
 tokens = types + reserved + operators + constants + assigments + others
@@ -62,30 +62,33 @@ reserved = {
     "char": "CHAR",
     "int": "INT",
     "float": "FLOAT",
-} 
+}
+
 
 def t_CCOMMENT(t):
     r"/\*(.|\n)*?\*/"
-    t.lexer.lineno += t.value.count('\n')
+    t.lexer.lineno += t.value.count("\n")
+
 
 def t_UNTERMCOMMENT(t):
     r"/\*(.|\n)*"
-    print("%d: Unterminated Comment" %t.lexer.lineno)
+    print("%d: Unterminated Comment" % t.lexer.lineno)
 
 
-def t_STRING_LITERAL(t) :
+def t_STRING_LITERAL(t):
     r"\"(.|\n)*?\""
     return t
 
 
 def t_UNMATCHEDQUOTE(t):
     r"\"(.|\n)*"
-    print("%d: Unmatched Quote " %t.lexer.lineno)
+    print("%d: Unmatched Quote " % t.lexer.lineno)
 
 
 def t_CPPCOMMENT(t):
     r"//.*"
     pass
+
 
 t_ICONST = r"[0-9]+"
 t_FCONST = r"([0-9]+\.[0-9]*)|([0-9]*\.[0-9]+)"
@@ -123,10 +126,13 @@ t_OR = r"\|\|"
 t_PP = r"\+\+"
 t_MM = r"\-\-"
 t_ADDRESS = r"\&"
+t_NOT = r"\!"
+
 
 def t_COMMA(t):
     r","
     return t
+
 
 def t_ID(t):
     r"[a-zA-Z_][a-zA-Z_0-9]*"
@@ -153,10 +159,10 @@ from ply import lex
 
 lexer = lex.lex()
 
-with open('projeto1/teste1') as f:
+with open("projeto1/teste1") as f:
     read_data = f.read()
 
-#sentence = "/* comment */ int j = 3; int main () {  int i = j;int k = 3;int p = 2 * j; assert p == 2 * i;}  /* asdasdas "
+# sentence = "/* comment */ int j = 3; int main () {  int i = j;int k = 3;int p = 2 * j; assert p == 2 * i;}  /* asdasdas "
 
 # Give the lexer some input
 lexer.input(read_data)

@@ -62,7 +62,7 @@ class Parser:
     def p_pointer(self, p):
         """ pointer : TIMES pointer_opt
         """
-        p[0] = (pointer, p[1], p[2])
+        p[0] = ('pointer', p[1], p[2])
 
     def p_pointer_opt(self, p):
         """pointer_opt: pointer
@@ -180,6 +180,11 @@ class Parser:
         """
         p[0] = p[1] if len(p) == 2 else (p[1], p[2])
 
+    def p_expression_opt(self,p):
+        """ expression_opt : expression
+                            | empty
+        """
+        p[0] = p[1]
     def p_assignment_expression(self, p):
         """assignment_expression : binary_expression
                             | unary_expression assignment_operator assignment_expression
@@ -206,7 +211,7 @@ class Parser:
                                 | PASSIGN
                                 | MINASSIGN
         """
-        p[0] =('assignment_operator', p[1])
+        p[0] = ('assignment_operator', p[1])
 
     def p_unary_operator(self, p):
         """unary_operator : AND
@@ -216,60 +221,93 @@ class Parser:
                     | NOT
         """
         p[0] = ('unary operator', p[1])
-        
-    # TODO
+
     def p_parameter_list(self, p):
         """parameter_list : parameter_declaration
-                        | parameter_list , parameter_declaration
+                        | parameter_list COMMA parameter_declaration
         """
+        p[0] = p[1] if len(p) == 2 else  (p[1], p[3])
 
-    # TODO
     def parameter_declaration(self, p):
         """ parameter_declaration : type_specifier declarator
         """
+        p[0] = (p[1], p[2])
 
-    # TODO
+
     def p_declaration(self, p):
 
-        """<declaration> ::=  <type_specifier> {<init_declarator>}* ; 
+        """declaration : type_specifier init_declarator_list_opt ; 
         """
+        p[0] = (p[1],p[2])
 
-    # TODO
+    def p_declaration_list(self,p):
+        """ declaration_list: declaration
+                    | declaration_list declaration
+        """
+        p[0] = [p[1]] if len(p) == 2 else p[1] + [p[2]]
+    
+    def p_declaration_list_opt(self,p):
+        """ declaration_list_opt : declaration_list
+                                | empty
+        """
+        p[0] = p[1]
+
     def p_init_declarator(self, p):
-        """init_declarator> : declarator
+        """init_declarator : declarator
                             | declarator EQ initializer
         """
+        p[0] = p[1] if len(p) == 2 else (p[1],p[3])
 
-    # TODO
+    def p_init_declarator_list(self,p):
+        """ init_declarator_list: init_declarator
+                                    | init_declarator_list init_declarator
+        """
+        p[0] = p[1] if len(p) == 2 else  p[1] +[p[2]]
+
+    def p_init_declarator_list_opt(self,p):
+        """ init_declarator_list_opt: init_declarator_list
+                                    | empty
+        """
+        p[0] = p[1] 
+
     def p_initializer(self, p):
         """initializer : assignment_expression
-                    | { <initializer_list> }
-                    | { <initializer_list> , }
+                    | LBRACK initializer_list RBRACK
+                    | LBRACK initializer_list COMMA RBRACK
         """
+        p[0] = p[1] if len(p) == 2 else p[3]
+
+    def p_initializer_list(self,p):
+        """ initializer_list : initializer
+                    | initializer_list COMMA initializer
+        """
+        p[0] = p[1] if len(p) == 2 else p[1] + [p[3]]
 
     # TODO
     def p_compound_statement(self, p):
-        """compound_statement : { {<declaration>}* {<statement>}* }
+        """compound_statement : LBRACK declaration_list_opt {<statement>}* RBRACK
         """
+
 
     # TODO
     def p_statement(self, p):
         """
-        <statement> ::= <expression_statement>
-                | <compound_statement>
-                | <selection_statement>
-                | <iteration_statement>
-                | <jump_statement>
-                | <assert_statement>
-                | <print_statement>
-                | <read_statement>
+        statement : expression_statement
+                | compound_statement
+                | selection_statement
+                | iteration_statement
+                | jump_statement
+                | assert_statement
+                | print_statement
+                | read_statement
         """
-
+        p[0] = p[1]
     # TODO
     def p_expression_statement(self, p):
         """
-        expression_statement: {<expression>}? ;
+        expression_statement: expression_opt ;
         """
+        p[0] = p[1]
 
     # TODO
     def p_selection_statement(self, p):

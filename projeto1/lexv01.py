@@ -34,10 +34,13 @@ others = (
     "RBRACK",
     "LBRACK",
     "SEMI",
+    "STRING_LITERAL",
+    "UNMATCHEDQUOTE"
     "ERROR",
     "CCOMMENT",
     "CPPCOMMENT",
     "UNTERMCOMMENT",
+    "COMMA"
 )
 
 tokens = types + reserved + operators + constants + assigments + others
@@ -59,12 +62,30 @@ reserved = {
     "char": "CHAR",
     "int": "INT",
     "float": "FLOAT",
-}
+} 
 
-t_CCOMMENT = r"/\*(.|\n)*?\*/"
-t_UNTERMCOMMENT = r"/\*(.|\n)*"
+def t_CCOMMENT(t):
+    r"/\*(.|\n)*?\*/"
+    t.lexer.lineno += t.value.count('\n')
 
-t_CPPCOMMENT = r"//.*"
+def t_UNTERMCOMMENT(t):
+    r"/\*(.|\n)*"
+    print("%d: Unterminated Comment" %t.lexer.lineno)
+
+
+def t_STRING_LITERAL(t) :
+    r"\"(.|\n)*?\""
+    return t
+
+
+def t_UNMATCHEDQUOTE(t):
+    r"\"(.|\n)*"
+    print("%d: Unmatched Quote " %t.lexer.lineno)
+
+
+def t_CPPCOMMENT(t):
+    r"//.*"
+    pass
 
 t_ICONST = r"[0-9]+"
 t_FCONST = r"([0-9]+\.[0-9]*)|([0-9]*\.[0-9]+)"
@@ -103,6 +124,9 @@ t_PP = r"\+\+"
 t_MM = r"\-\-"
 t_ADDRESS = r"\&"
 
+def t_COMMA(t):
+    r","
+    return t
 
 def t_ID(t):
     r"[a-zA-Z_][a-zA-Z_0-9]*"
@@ -128,10 +152,14 @@ def t_error(t):
 from ply import lex
 
 lexer = lex.lex()
-sentence = "/* comment */ int j = 3; int main () {  int i = j;int k = 3;int p = 2 * j; assert p == 2 * i;}  /* asdasdas "
+
+with open('projeto1/teste1') as f:
+    read_data = f.read()
+
+#sentence = "/* comment */ int j = 3; int main () {  int i = j;int k = 3;int p = 2 * j; assert p == 2 * i;}  /* asdasdas "
 
 # Give the lexer some input
-lexer.input(sentence)
+lexer.input(read_data)
 
 # Tokenize
 while True:

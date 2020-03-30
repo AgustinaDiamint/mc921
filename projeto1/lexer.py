@@ -122,23 +122,23 @@ class UCLexer:
 
     # Regexes
 
-    def t_CCOMMENT(t):
+    def t_CCOMMENT(self, t):
         r"/\*(.|\n)*?\*/"
         t.lexer.lineno += t.value.count("\n")
 
-    def t_UNTERMCOMMENT(t):
+    def t_UNTERMCOMMENT(self, t):
         r"/\*(.|\n)*"
         print("%d: Unterminated Comment" % t.lexer.lineno)
 
-    def t_STRING_LITERAL(t):
+    def t_STRING_LITERAL(self, t):
         r"\"(.|\n)*?\""
         return t
 
-    def t_UNMATCHEDQUOTE(t):
+    def t_UNMATCHEDQUOTE(self, t):
         r"\"(.|\n)*"
         print("%d: Unmatched Quote " % t.lexer.lineno)
 
-    def t_CPPCOMMENT(t):
+    def t_CPPCOMMENT(self, t):
         r"//.*"
         pass
 
@@ -179,23 +179,23 @@ class UCLexer:
     t_ADDRESS = r"\&"
     t_NOT = r"\!"
 
-    def t_COMMA(t):
+    def t_COMMA(self, t):
         r","
         return t
 
-    def t_ID(t):
+    def t_ID(self, t):
         r"[a-zA-Z_][a-zA-Z_0-9]*"
-        t.type = reserved.get(t.value, "ID")  # Check for reserved words
+        t.type = self.keyword_map.get(t.value, "ID")  # Check for reserved words
         return t
 
     # Ignored characters
     t_ignore = r" \t"
 
-    def t_newline(t):
+    def t_newline(self, t):
         r"\n+"
         t.lexer.lineno += t.value.count("\n")
 
-    def t_error(t):
+    def t_error(self, t):
         msg = "Illegal character '%s'" % t.value[0]
         self._error(msg, t)
 

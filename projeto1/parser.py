@@ -2,9 +2,18 @@ import ply.yacc as yacc
 from lexer import UCLexer
 
 
-class Parser:
+class UCParser:
+    def __init__(self, error_func):
+        self.start = "program"
+        self.error_func = error_func
+        self.lexer = UCLexer(error_func)
+        self.lexer.build()
+
+        self.tokens = self.lexer.tokens
+        self.parser = yacc.yacc(module=self)
+
     def p_empty(self, p):
-        """empty:"""
+        """empty : """
         p[0] = None
 
     def p_program(self, p):
@@ -22,11 +31,11 @@ class Parser:
         """global_declaration : function_definition
                               | declaration 
         """
-        p[0] = ("global_declaration", p[1])
+        p[0] = p[1]
 
     def p_function_defnition(self, p):
         """ function_definition : type_specifier_opt declarator declaration_list_opt compound_statement """
-        p[0] = ("function_definition", p[1], p[2], p[3], p[4])
+        p[0] = ( p[1], p[2], p[3], p[4])
 
     def p_type_specifier(self, p):
         """ type_specifier : VOID
@@ -34,23 +43,12 @@ class Parser:
                            | INT
                            | FLOAT
         """
-        p[0] = ("type_specifier", p[1])
-
-    def type_specifier_opt(self, p):
-        """type_specifier_opt: type_specifier
-                             | empty
-        """
         p[0] = p[1]
 
-    def declaration_list(self, p):
-        """ declaration_list: declaration
-                            | declaration_list declaration
+    def p_type_specifier_opt(self, p):
+        """type_specifier_opt : type_specifier
+                             | empty
         """
-        p[0] = [p[1]] if len(p) == 2 else p[1] + [p[2]]
-
-    def declaration_list_opt(self, p):
-        """declaration_list_opt: declaration_list
-                            | empty"""
         p[0] = p[1]
 
     def p_declarator(self, p):
@@ -62,20 +60,20 @@ class Parser:
     def p_pointer(self, p):
         """ pointer : TIMES pointer_opt
         """
-        p[0] = ("pointer", p[1], p[2])
+        p[0] = (p[1], p[2])
 
     def p_pointer_opt(self, p):
-        """pointer_opt: pointer
+        """pointer_opt : pointer
                       | empty
         """
         p[0] = p[1]
 
     def p_direct_declarator(self, p):
-        """ direct_declarator: ID
-                      | LPAR declarator RPAR
-                      | direct_declarator LBRACK constant_exp_opt RBRACK
-                      | direct_declarator LPAR parameter_list RPAR
-                      | direct_declarator LPAR identifier_list_opt RPAR
+        """ direct_declarator : ID
+                      | LPAREN declarator RPAREN
+                      | direct_declarator LBRACE constant_exp_opt RBRACE
+                      | direct_declarator LPAREN parameter_list RPAREN
+                      | direct_declarator LPAREN identifier_list_opt RPAREN
         """
         if len(p) == 2:
             p[0] = p[1]
@@ -85,7 +83,7 @@ class Parser:
             p[0] = (p[1], p[3])
 
     def p_constant_expression(self, p):
-        """ constant_expression : binary_expression """
+        """ constant_expression : expr """
         p[0] = p[1]
 
     def p_constant_exp_opt(self, p):
@@ -100,15 +98,16 @@ class Parser:
         """
         p[0] = [p[1]] if len(p) == 2 else p[1] + [p[2]]
 
-    def identifier_list_opt(self, p):
-        """ identifier_list_opt: identifier_list
+    def p_identifier_list_opt(self, p):
+        """ identifier_list_opt : identifier_list
                                 | empty
         """
         p[0] = p[1]
 
-    def p_binop_expr(self, p):
+    def p_expr(self, p):
         """
-        expr : expr PLUS expr
+        expr :  cast_expression
+                | expr PLUS expr
                 | expr MINUS expr
                 | expr TIMES expr
                 | expr DIVIDE expr
@@ -121,15 +120,13 @@ class Parser:
                 | expr DIFF expr
                 | expr AND expr
                 | expr OR expr
-                | expr PP expr
-                | expr MM expr
         """
-        p[0] = (p[2], p[1], p[3])
+        p[0] = p[1] if len(p) == 2 else (p[2], p[1], p[3])
 
     def p_cast_expression(self, p):
         """
-        cast_expression: unary_expression
-                    | ( type_specifier ) cast_expression
+        cast_expression : unary_expression
+                    | LPAREN type_specifier RPAREN cast_expression
         """
         p[0] = p[1] if len(p) == 2 else (p[2], p[4])
 
@@ -145,8 +142,8 @@ class Parser:
     def p_postfix_expression(self, p):
         """
         postfix_expression : primary_expression
-                            | postfix_expression LBRACK expression RBRACK
-                            | postfix_expression LPAR assignment_expression_opt RPAR
+                            | postfix_expression LBRACE expression RBRACE
+                            | postfix_expression LPAREN assignment_expression_opt RPAREN
                             | postfix_expression PP
                             | postfix_expression MM
         """
@@ -161,23 +158,21 @@ class Parser:
         """
         primary_expression : ID
                             | constant
-                            | string
-                            | ( expression )
+                            | STRING_LITERAL
+                            | LPAREN expression RPAREN
         """
         p[0] = p[1] if len(p) == 2 else p[2]
 
-    # TODO
-    # o que é char const
+
     def p_constant(self, p):
-        """ constant: ICONST
-                    | CCONST
+        """ constant : ICONST
                     | FCONST
         """
         p[0] = p[1]
 
     def p_expression(self, p):
         """ expression : assignment_expression
-                        | expression , assignment_expression
+                        | expression COMMA assignment_expression
         """
         p[0] = p[1] if len(p) == 2 else (p[1], p[2])
 
@@ -188,25 +183,19 @@ class Parser:
         p[0] = p[1]
 
     def p_assignment_expression(self, p):
-        """assignment_expression : binary_expression
+        """assignment_expression : expr
                             | unary_expression assignment_operator assignment_expression
         """
         p[0] = p[1] if len(p) == 2 else (p[1], p[2], p[3])
 
-    def p_assignment_expression_list(self, p):
-        """ assignment_expression_list: assignment_expression_list assignment_expression
-                                    | assignment_expression
-        """
-        p[0] = [p[1]] if len(p) == 2 else p[1] + [p[2]]
-
-    def assignment_expression_opt(self, p):
-        """ assignment_expression_opt: assignment_expression
+    def p_assignment_expression_opt(self, p):
+        """ assignment_expression_opt : assignment_expression
                                         | empty
         """
         p[0] = p[1]
 
     def p_argument_expression(self, p):
-        """argument_expression: assignment_expression
+        """argument_expression : assignment_expression
                             | argument_expression COMMA assignment_expression
         """
         if len(p) == 2:
@@ -215,14 +204,14 @@ class Parser:
             p[0] = (p[1], p[3])
 
     def p_assignment_operator(self, p):
-        """ assignment_operator: EQ
+        """ assignment_operator : ASSIGN
                                 | TASSIGN
                                 | DASSIGN
                                 | MODASSIGN
                                 | PASSIGN
                                 | MINASSIGN
         """
-        p[0] = ("assignment_operator", p[1])
+        p[0] =  p[1]
 
     def p_unary_operator(self, p):
         """unary_operator : AND
@@ -239,19 +228,19 @@ class Parser:
         """
         p[0] = p[1] if len(p) == 2 else (p[1], p[3])
 
-    def parameter_declaration(self, p):
+    def p_parameter_declaration(self, p):
         """ parameter_declaration : type_specifier declarator
         """
         p[0] = (p[1], p[2])
 
     def p_declaration(self, p):
 
-        """declaration : type_specifier init_declarator_opt ; 
+        """declaration : type_specifier init_declarator_list_opt SEMI 
         """
         p[0] = (p[1], p[2])
 
     def p_declaration_list(self, p):
-        """ declaration_list: declaration
+        """ declaration_list : declaration
                     | declaration_list declaration
         """
         p[0] = [p[1]] if len(p) == 2 else p[1] + [p[2]]
@@ -264,15 +253,22 @@ class Parser:
 
     def p_init_declarator(self, p):
         """init_declarator : declarator
-                            | declarator EQ initializer
+                            | declarator ASSIGN initializer
         """
         p[0] = p[1] if len(p) == 2 else (p[1], p[3])
-
-    def p_init_declarator_opt(self, p):
-        """ init_declarator_opt: init_declarator
+    
+    def p_init_declarator_list(self, p):
+        """ init_declarator_list : init_declarator
+                                | init_declarator_list COMMA init_declarator
+        """
+        p[0] = [p[1]] if len(p) == 2 else p[1] + [p[2]]
+    
+    def p_init_declarator_list_opt(self,p):
+        """ init_declarator_list_opt : init_declarator_list
                                     | empty
         """
         p[0] = p[1]
+
 
     def p_initializer(self, p):
         """initializer : assignment_expression
@@ -287,7 +283,6 @@ class Parser:
         """
         p[0] = p[1] if len(p) == 2 else p[1] + [p[3]]
 
-    # TODO
     def p_compound_statement(self, p):
         """compound_statement : LBRACK declaration_list_opt statement_list_opt RBRACK
         """
@@ -308,19 +303,19 @@ class Parser:
 
     def p_expression_statement(self, p):
         """
-        expression_statement: expression_opt ;
+        expression_statement : expression_opt SEMI
         """
         p[0] = p[1]
 
     def p_selection_statement(self, p):
-        """    selection_statement : IF LPAR expression RPAR statement
-                                    | IF LPAR expression RPAR statement ELSE statement
+        """    selection_statement : IF LPAREN expression RPAREN statement
+                                    | IF LPAREN expression RPAREN statement ELSE statement
         """
         p[0] = ("IF", p[3], p[4]) if len(p) == 5 else ("IF", p[3], p[5], "else", p[7])
 
     def p_iteration_statement(self, p):
-        """    iteration_statement : WHILE LPAR expression RPAR statement
-                                    | FOR LPAR expression_opt SEMI expression_opt SEMI expression_opt RPAR statement
+        """    iteration_statement : WHILE LPAREN expression RPAREN statement
+                                    | FOR LPAREN expression_opt SEMI expression_opt SEMI expression_opt RPAREN statement
         """
         if len(p) == 6:
             p[0] = ("WHILE", p[3], p[5])
@@ -334,53 +329,56 @@ class Parser:
         p[0] = (p[1], p[2])
 
     def p_assert_statement(self, p):
-        """ assert_statement: ASSERT expr SEMI """
+        """ assert_statement : ASSERT expr SEMI """
         p[0] = ("assert", p[1])
 
     def p_print_statement(self, p):
-        """ statement : PRINT LPAREN expr RPAREN SEMI 
+        """ print_statement : PRINT LPAREN expr RPAREN SEMI 
         """
         p[0] = ("print", p[3])
 
     def p_read_statement(self, p):
-        """read_statement : READ LPAR argument_expression RPAR SEMI"""
+        """read_statement : READ LPAREN argument_expression RPAREN SEMI"""
         p[0] = ("READ", p[2])
 
     def p_statement_list(self, p):
-        """ statements : statements statement
+        """ statement_list : statement_list statement
                     | statement
         """
         if len(p) == 2:
-            p[0] = p[1]
+            p[0] = [p[1]]
         else:
-            p[0] = p[1] + (p[2])
+            p[0] = p[1] + [p[2]]
 
     def p_statement_list_opt(self, p):
-        """ statement_list_opt: statement_list
+        """ statement_list_opt : statement_list
                                 | empty
         """
         p[0] = p[1]
 
     def p_assign_statement(self, p):
-        """ statement : ID EQ expr
+        """ statement : ID ASSIGN expr
         """
         p[0] = ("assign", p[1], p[3])
-
-    def binary_expression_cast_expression(self, p):
-        """ binary_expression : cast_expression"""
-        p[0] = ("bin_expression", p[1])
-
-    def p_num_expr(self, p):
-        """ expr : NUM
-        """
-        p[0] = ("num", p[1])
-
-    def p_name_expr(self, p):
-        """ expr : ID
-        """
-        p[0] = ("id", p[1])
 
     def p_compound_expr(self, p):
         """ expr : LPAREN expr RPAREN
         """
         p[0] = p[2]
+    
+    precedence = (
+    ('left', 'PLUS'),
+    ('left', 'MINUS'),
+    ('left', 'TIMES'),
+    ('left', 'DIVIDE')
+    )
+
+if __name__ == "__main__":
+
+    import sys
+
+    def print_error(msg, x, y):
+        print("Lexical error: %s at %d:%d" % (msg, x, y))
+
+    parser = UCParser(print_error)
+    parser.parser.parse(open(sys.argv[1]).read())  # print tokens

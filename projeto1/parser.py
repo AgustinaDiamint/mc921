@@ -37,7 +37,7 @@ class UCParser:
         p[0] = p[1]
 
     def p_function_defnition(self, p):
-        """ function_definition : type_specifier_opt declarator declaration_list_opt compound_statement """
+        """ function_definition : type_specifier declarator declaration_list_opt compound_statement """
         p[0] = ( p[1], p[2], p[3], p[4])
 
     def p_type_specifier(self, p):
@@ -46,13 +46,7 @@ class UCParser:
                            | INT
                            | FLOAT
         """
-        p[0] = p[1]
-
-    def p_type_specifier_opt(self, p):
-        """type_specifier_opt : type_specifier
-                             | empty
-        """
-        p[0] = p[1]
+        p[0] = p[1] if len(p) == 2 else None
 
     def p_declarator(self, p):
         """ declarator : pointer direct_declarator
@@ -74,14 +68,18 @@ class UCParser:
     def p_direct_declarator(self, p):
         """ direct_declarator : ID
                       | LPAREN declarator RPAREN
-                      | direct_declarator LBRACE constant_exp_opt RBRACE
+                      | direct_declarator LBRACE constant_expression RBRACE
+                      | direct_declarator LBRACE RBRACE
                       | direct_declarator LPAREN parameter_list RPAREN
                       | direct_declarator LPAREN identifier_list_opt RPAREN
         """
         if len(p) == 2:
             p[0] = p[1]
         elif len(p) == 4:
-            p[0] = p[2]
+            if p[1] == "LPAREN":
+                p[0] = p[2]
+            else:
+                p[0] = p[1]
         else:
             p[0] = (p[1], p[3])
 
@@ -89,11 +87,11 @@ class UCParser:
         """ constant_expression : expr """
         p[0] = p[1]
 
-    def p_constant_exp_opt(self, p):
-        """ constant_exp_opt : constant_expression
-                            | empty
-        """
-        p[0] = p[1]
+    # def p_constant_exp_opt(self, p):
+    #     """ constant_exp_opt : constant_expression
+    #                         | empty
+    #     """
+    #     p[0] = p[1] if len(p) == 2 else p[0] = None
 
     def p_identifier_list(self, p):
         """ identifier_list : identifier_list ID
@@ -147,14 +145,14 @@ class UCParser:
         postfix_expression : primary_expression
                             | postfix_expression LBRACE expression RBRACE
                             | postfix_expression LPAREN argument_expression RPAREN
-                            | postfix_expression LBRACE RBRACE
+                            | postfix_expression LPAREN RPAREN
                             | postfix_expression PP
                             | postfix_expression MM
         """
         if len(p) == 2:
             p[0] = p[1]
-        elif len(p) == 3:
-            p[0] = None
+        elif len(p) == 4:
+            p[0] = p[1]
         elif len(p) == 5:
             p[0] = (p[1], [3])
         else:
@@ -389,4 +387,4 @@ if __name__ == "__main__":
         print("Lexical error: %s at %d:%d" % (msg, x, y))
 
     parser = UCParser(print_error)
-    parser.parser.parse(open(sys.argv[1]).read(), debug = True)  # print tokens
+    # parser.parser.parse(open(sys.argv[1]).read())  # print tokens

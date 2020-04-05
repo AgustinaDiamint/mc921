@@ -4,13 +4,16 @@ from lexer import UCLexer
 
 class UCParser:
     def __init__(self, error_func):
+        # initial state
         self.start = "program"
+
+        # lexer
         self.error_func = error_func
         self.lexer = UCLexer(error_func)
         self.lexer.build()
 
         self.tokens = self.lexer.tokens
-        self.parser = yacc.yacc(module=self)
+        self.parser = yacc.yacc(module=self, start=self.start)
 
     def p_empty(self, p):
         """empty : """
@@ -143,8 +146,8 @@ class UCParser:
         """
         postfix_expression : primary_expression
                             | postfix_expression LBRACE expression RBRACE
+                            | postfix_expression LPAREN argument_expression RPAREN
                             | postfix_expression LBRACE RBRACE
-                            | postfix_expression LPAREN argument_expression_opt RPAREN
                             | postfix_expression PP
                             | postfix_expression MM
         """
@@ -211,7 +214,7 @@ class UCParser:
         p[0] =  p[1]
 
     def p_unary_operator(self, p):
-        """unary_operator : ADRESS
+        """unary_operator : ADDRESS
                     | TIMES
                     | PLUS
                     | MINUS
@@ -366,6 +369,9 @@ class UCParser:
         """
         p[0] = p[2]
     
+    def p_error(self, p):
+        pass
+
     precedence = (
         ('left', 'OR'),
         ('left', 'AND'),

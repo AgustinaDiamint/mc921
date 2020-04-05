@@ -1,5 +1,5 @@
 import ply.yacc as yacc
-from lexer import UCLexer
+from projeto1.lexer import UCLexer
 
 
 class UCParser:
@@ -63,7 +63,7 @@ class UCParser:
     def p_pointer(self, p):
         """ pointer : TIMES pointer_opt
         """
-        p[0] = (p[1], p[2])
+        p[0] = p[1] if len(p) == 2 else (p[1],p[2])
 
     def p_pointer_opt(self, p):
         """pointer_opt : pointer
@@ -389,4 +389,4 @@ if __name__ == "__main__":
         print("Lexical error: %s at %d:%d" % (msg, x, y))
 
     parser = UCParser(print_error)
-    parser.parser.parse(open(sys.argv[1]).read())  # print tokens
+    parser.parser.parse(open(sys.argv[1]).read(), debug = True)  # print tokens

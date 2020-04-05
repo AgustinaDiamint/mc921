@@ -143,12 +143,15 @@ class UCParser:
         """
         postfix_expression : primary_expression
                             | postfix_expression LBRACE expression RBRACE
-                            | postfix_expression LPAREN assignment_expression_opt RPAREN
+                            | postfix_expression LBRACE RBRACE
+                            | postfix_expression LPAREN argument_expression_opt RPAREN
                             | postfix_expression PP
                             | postfix_expression MM
         """
         if len(p) == 2:
             p[0] = p[1]
+        elif len(p) == 3:
+            p[0] = None
         elif len(p) == 5:
             p[0] = (p[1], [3])
         else:
@@ -188,12 +191,6 @@ class UCParser:
         """
         p[0] = p[1] if len(p) == 2 else (p[1], p[2], p[3])
 
-    def p_assignment_expression_opt(self, p):
-        """ assignment_expression_opt : assignment_expression
-                                        | empty
-        """
-        p[0] = p[1]
-
     def p_argument_expression(self, p):
         """argument_expression : assignment_expression
                             | argument_expression COMMA assignment_expression
@@ -214,7 +211,7 @@ class UCParser:
         p[0] =  p[1]
 
     def p_unary_operator(self, p):
-        """unary_operator : AND
+        """unary_operator : ADRESS
                     | TIMES
                     | PLUS
                     | MINUS
@@ -316,11 +313,14 @@ class UCParser:
     def p_iteration_statement(self, p):
         """    iteration_statement : WHILE LPAREN expression RPAREN statement
                                     | FOR LPAREN expression_opt SEMI expression_opt SEMI expression_opt RPAREN statement
+                                    | FOR LPAREN declaration expression_opt SEMI expression_opt RPAREN statement
         """
         if len(p) == 6:
             p[0] = ("WHILE", p[3], p[5])
-        else:
+        elif len(p) == 10:
             p[0] = ("FOR", p[3], p[5], p[7], p[9])
+        else:
+            p[0] = ("FOR", p[3], p[4], p[6], p[8])
 
     def p_jump_statement(self, p):
         """jump_statement : BREAK SEMI
@@ -367,10 +367,12 @@ class UCParser:
         p[0] = p[2]
     
     precedence = (
-    ('left', 'PLUS'),
-    ('left', 'MINUS'),
-    ('left', 'TIMES'),
-    ('left', 'DIVIDE')
+        ('left', 'OR'),
+        ('left', 'AND'),
+        ('left', 'EQUALS', 'DIFF'),
+        ('left', 'GT', 'GET', 'LT', 'LET'),
+        ('left', 'PLUS', 'MINUS'),
+        ('left', 'TIMES', 'DIVIDE', 'MOD')
     )
 
 if __name__ == "__main__":

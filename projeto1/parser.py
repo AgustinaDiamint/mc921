@@ -357,15 +357,6 @@ class UCParser:
         """
         p[0] = p[1]
 
-    def p_assign_statement(self, p):
-        """ statement : ID ASSIGN expr
-        """
-        p[0] = ("assign", p[1], p[3])
-
-    def p_compound_expr(self, p):
-        """ expr : LPAREN expr RPAREN
-        """
-        p[0] = p[2]
     
     def p_error(self, p):
         pass

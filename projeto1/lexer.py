@@ -7,7 +7,7 @@ class UCLexer:
         tokens.
     """
 
-    def __init__(self, error_func):
+    def __init__(self, error_func, debug=False, debuglog=None):
         """ Create a new Lexer.
             An error function. Will be called with an error
             message, line and column as arguments, in case of
@@ -189,7 +189,7 @@ class UCLexer:
         return t
 
     # Ignored characters
-    t_ignore = r" \t"
+    t_ignore = r" "
 
     def t_newline(self, t):
         r"\n+"
@@ -199,7 +199,7 @@ class UCLexer:
         msg = "Illegal character '%s'" % t.value[0]
         self._error(msg, t)
 
-    # Scanner (used only for test)
+    # Scanner (used only for test)ß
     def scan(self, data):
         self.lexer.input(data)
         while True:

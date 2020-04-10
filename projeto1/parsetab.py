@@ -5,7 +5,7 @@ _tabversion = "3.10"
 
 _lr_method = "LALR"
 
-_lr_signature = "programleftORleftANDleftEQUALSDIFFleftGTGETLTLETleftPLUSMINUSleftTIMESDIVIDEMODADDRESS AND ASSERT ASSIGN BREAK CCOMMENT CCONST CHAR COMMA CPPCOMMENT DASSIGN DIFF DIVIDE ELSE EQUALS ERROR FCONST FLOAT FOR GET GT ICONST ID IF INT LBRACE LBRACK LET LPAREN LT MINASSIGN MINUS MM MOD MODASSIGN NOT OR PASSIGN PLUS PP PRINT RBRACE RBRACK READ RETURN RPAREN SEMI STRING_LITERAL TASSIGN TIMES UNMATCHEDQUOTE UNTERMCOMMENT VOID WHILEempty :  program  : global_declaration_list\n         global_declaration_list : global_declaration\n                                    | global_declaration_list global_declaration\n        global_declaration : function_definition\n                              | declaration \n         function_definition : type_specifier declarator declaration_list_opt compound_statement  type_specifier : VOID\n                           | CHAR\n                           | INT\n                           | FLOAT\n         declarator : pointer direct_declarator\n                        | direct_declarator\n         pointer : TIMES pointer_opt\n        pointer_opt : pointer\n                      | empty\n         direct_declarator : ID\n                      | LPAREN declarator RPAREN\n                      | direct_declarator LBRACK constant_expression_opt RBRACK\n                      | direct_declarator LPAREN parameter_list RPAREN\n                      | direct_declarator LPAREN identifier_list_opt RPAREN\n         constant_expression : expr  constant_expression_opt : constant_expression\n                                    | empty\n         identifier_list : identifier_list ID\n                            | ID\n         identifier_list_opt : identifier_list\n                                | empty\n        \n        expr :  cast_expression\n                | expr PLUS expr\n                | expr MINUS expr\n                | expr TIMES expr\n                | expr DIVIDE expr\n                | expr EQUALS expr\n                | expr MOD expr\n                | expr GT expr\n                | expr GET expr\n                | expr LT expr\n                | expr LET expr\n                | expr DIFF expr\n                | expr AND expr\n                | expr OR expr\n        \n        cast_expression : unary_expression\n                    | LPAREN type_specifier RPAREN cast_expression\n        \n        unary_expression : postfix_expression\n                        | PP unary_expression\n                        | MM unary_expression\n                        | unary_operator cast_expression\n        \n        postfix_expression : primary_expression\n                            | postfix_expression LBRACK expression RBRACK\n                            | postfix_expression LPAREN argument_expression RPAREN\n                            | postfix_expression LPAREN RPAREN\n                            | postfix_expression PP\n                            | postfix_expression MM\n        \n        primary_expression : ID\n                            | constant\n                            | STRING_LITERAL\n                            | LPAREN expression RPAREN\n         constant : ICONST\n                    | FCONST\n         expression : assignment_expression\n                        | assignment_expression COMMA expression\n         expression_opt : expression\n                            | empty\n        assignment_expression : expr\n                            | unary_expression assignment_operator assignment_expression\n        argument_expression : assignment_expression\n                            | argument_expression COMMA assignment_expression\n         assignment_operator : ASSIGN\n                                | TASSIGN\n                                | DASSIGN\n                                | MODASSIGN\n                                | PASSIGN\n                                | MINASSIGN\n        unary_operator : ADDRESS\n                    | TIMES\n                    | PLUS\n                    | MINUS\n                    | NOT\n        parameter_list : parameter_declaration\n                        | parameter_list COMMA parameter_declaration\n         parameter_declaration : type_specifier declarator\n        declaration : type_specifier init_declarator_list SEMI \n         declaration_list : declaration\n                    | declaration_list declaration\n         declaration_list_opt : declaration_list\n                                | empty\n        init_declarator : declarator\n                            | declarator ASSIGN initializer\n         init_declarator_list : init_declarator\n                                | init_declarator_list COMMA init_declarator\n        initializer : assignment_expression\n                    | LBRACE initializer_list RBRACE\n                    | LBRACE initializer_list COMMA RBRACE\n         initializer_list : initializer\n                    | initializer_list COMMA initializer\n        compound_statement : LBRACE declaration_list_opt statement_list_opt RBRACE\n        \n        statement : expression_statement\n                | compound_statement\n                | selection_statement\n                | iteration_statement\n                | jump_statement\n                | assert_statement\n                | print_statement\n                | read_statement\n        \n        expression_statement : expression_opt SEMI\n            selection_statement : IF LPAREN expression RPAREN statement\n                                    | IF LPAREN expression RPAREN statement ELSE statement\n            iteration_statement : WHILE LPAREN expression RPAREN statement\n                                    | FOR LPAREN expression_opt SEMI expression_opt SEMI expression_opt RPAREN statement\n                                    | FOR LPAREN declaration expression_opt SEMI expression_opt RPAREN statement\n        jump_statement : BREAK SEMI\n                        | RETURN expression_opt SEMI\n         assert_statement : ASSERT expr SEMI  print_statement : PRINT LPAREN expression_opt RPAREN SEMI\n        read_statement : READ LPAREN argument_expression RPAREN SEMI statement_list : statement_list statement\n                    | statement\n         statement_list_opt : statement_list\n                                | empty\n        "
+_lr_signature = "programleftORleftANDleftEQUALSDIFFleftGTGETLTLETleftPLUSMINUSleftTIMESDIVIDEMODADDRESS AND ASSERT ASSIGN BREAK CCOMMENT CCONST CHAR COMMA CPPCOMMENT DASSIGN DIFF DIVIDE ELSE EQUALS ERROR FCONST FLOAT FOR GET GT ICONST ID IF INT LBRACE LBRACK LET LPAREN LT MINASSIGN MINUS MM MOD MODASSIGN NOT OR PASSIGN PLUS PP PRINT RBRACE RBRACK READ RETURN RPAREN SEMI STRING_LITERAL TASSIGN TIMES UNMATCHEDQUOTE UNTERMCOMMENT VOID WHILEempty :  program  : global_declaration_list\n         global_declaration_list : global_declaration\n                                    | global_declaration_list global_declaration\n        global_declaration : function_definition\n                              | declaration \n         function_definition : type_specifier declarator declaration_list_opt compound_statement  type_specifier : VOID\n                           | CHAR\n                           | INT\n                           | FLOAT\n         declarator : pointer direct_declarator\n                        | direct_declarator\n         pointer : TIMES pointer_opt\n        pointer_opt : pointer\n                      | empty\n         direct_declarator : ID\n                      | LPAREN declarator RPAREN\n                      | direct_declarator LBRACK constant_expression_opt RBRACK\n                      | direct_declarator LPAREN parameter_list RPAREN\n                      | direct_declarator LPAREN identifier_list_opt RPAREN\n         constant_expression : expr  constant_expression_opt : constant_expression\n                                    | empty\n         identifier_list : identifier_list ID\n                            | ID\n         identifier_list_opt : identifier_list\n                                | empty\n        \n        expr :  cast_expression\n                | expr PLUS expr\n                | expr MINUS expr\n                | expr TIMES expr\n                | expr DIVIDE expr\n                | expr EQUALS expr\n                | expr MOD expr\n                | expr GT expr\n                | expr GET expr\n                | expr LT expr\n                | expr LET expr\n                | expr DIFF expr\n                | expr AND expr\n                | expr OR expr\n        \n        cast_expression : unary_expression\n                    | LPAREN type_specifier RPAREN cast_expression\n        \n        unary_expression : postfix_expression\n                        | PP unary_expression\n                        | MM unary_expression\n                        | unary_operator cast_expression\n        \n        postfix_expression : primary_expression\n                            | postfix_expression LBRACK expression RBRACK\n                            | postfix_expression LPAREN argument_expression RPAREN\n                            | postfix_expression LPAREN RPAREN\n                            | postfix_expression PP\n                            | postfix_expression MM\n         \n        primary_expression : ID\n                            | constant\n                            | STRING_LITERAL\n                            | LPAREN expression RPAREN\n         constant : ICONST\n                    | FCONST\n         expression : assignment_expression\n                        | assignment_expression COMMA expression\n         expression_opt : expression\n                            | empty\n        assignment_expression : expr\n                            | unary_expression assignment_operator assignment_expression\n        argument_expression : assignment_expression\n                            | argument_expression COMMA assignment_expression\n         assignment_operator : ASSIGN\n                                | TASSIGN\n                                | DASSIGN\n                                | MODASSIGN\n                                | PASSIGN\n                                | MINASSIGN\n        unary_operator : ADDRESS\n                    | TIMES\n                    | PLUS\n                    | MINUS\n                    | NOT\n        parameter_list : parameter_declaration\n                        | parameter_list COMMA parameter_declaration\n         parameter_declaration : type_specifier declarator\n        declaration : type_specifier init_declarator_list SEMI \n         declaration_list : declaration\n                    | declaration_list declaration\n         declaration_list_opt : declaration_list\n                                | empty\n        init_declarator : declarator\n                            | declarator ASSIGN initializer\n         init_declarator_list : init_declarator\n                                | init_declarator_list COMMA init_declarator\n        initializer : assignment_expression\n                    | LBRACE initializer_list RBRACE\n                    | LBRACE initializer_list COMMA RBRACE\n         initializer_list : initializer\n                    | initializer_list COMMA initializer\n        compound_statement : LBRACE declaration_list_opt statement_list_opt RBRACE\n        \n        statement : expression_statement\n                | compound_statement\n                | selection_statement\n                | iteration_statement\n                | jump_statement\n                | assert_statement\n                | print_statement\n                | read_statement\n        \n        expression_statement : expression_opt SEMI\n            selection_statement : IF LPAREN expression RPAREN statement\n                                    | IF LPAREN expression RPAREN statement ELSE statement\n            iteration_statement : WHILE LPAREN expression RPAREN statement\n                                    | FOR LPAREN expression_opt SEMI expression_opt SEMI expression_opt RPAREN statement\n                                    | FOR LPAREN declaration expression_opt SEMI expression_opt RPAREN statement\n        jump_statement : BREAK SEMI\n                        | RETURN expression_opt SEMI\n         assert_statement : ASSERT expr SEMI  print_statement : PRINT LPAREN expression_opt RPAREN SEMI\n        read_statement : READ LPAREN argument_expression RPAREN SEMI statement_list : statement_list statement\n                    | statement\n         statement_list_opt : statement_list\n                                | empty\n        "
 
 _lr_action_items = {
     "VOID": (
@@ -6274,15 +6274,15 @@ for _k, _v in _lr_goto_items.items():
 del _lr_goto_items
 _lr_productions = [
     ("S' -> program", "S'", 1, None, None, None),
-    ("empty -> <empty>", "empty", 0, "p_empty", "parser.py", 38),
-    ("program -> global_declaration_list", "program", 1, "p_program", "parser.py", 42),
+    ("empty -> <empty>", "empty", 0, "p_empty", "parser.py", 42),
+    ("program -> global_declaration_list", "program", 1, "p_program", "parser.py", 46),
     (
         "global_declaration_list -> global_declaration",
         "global_declaration_list",
         1,
         "p_global_declaration_list",
         "parser.py",
-        47,
+        51,
     ),
     (
         "global_declaration_list -> global_declaration_list global_declaration",
@@ -6290,7 +6290,7 @@ _lr_productions = [
         2,
         "p_global_declaration_list",
         "parser.py",
-        48,
+        52,
     ),
     (
         "global_declaration -> function_definition",
@@ -6298,7 +6298,7 @@ _lr_productions = [
         1,
         "p_global_declaration",
         "parser.py",
-        53,
+        57,
     ),
     (
         "global_declaration -> declaration",
@@ -6306,15 +6306,15 @@ _lr_productions = [
         1,
         "p_global_declaration",
         "parser.py",
-        54,
+        58,
     ),
     (
         "function_definition -> type_specifier declarator declaration_list_opt compound_statement",
         "function_definition",
         4,
-        "p_function_defnition",
+        "p_function_definition",
         "parser.py",
-        59,
+        63,
     ),
     (
         "type_specifier -> VOID",
@@ -6322,7 +6322,7 @@ _lr_productions = [
         1,
         "p_type_specifier",
         "parser.py",
-        63,
+        67,
     ),
     (
         "type_specifier -> CHAR",
@@ -6330,16 +6330,16 @@ _lr_productions = [
         1,
         "p_type_specifier",
         "parser.py",
-        64,
+        68,
     ),
-    ("type_specifier -> INT", "type_specifier", 1, "p_type_specifier", "parser.py", 65),
+    ("type_specifier -> INT", "type_specifier", 1, "p_type_specifier", "parser.py", 69),
     (
         "type_specifier -> FLOAT",
         "type_specifier",
         1,
         "p_type_specifier",
         "parser.py",
-        66,
+        70,
     ),
     (
         "declarator -> pointer direct_declarator",
@@ -6347,7 +6347,7 @@ _lr_productions = [
         2,
         "p_declarator",
         "parser.py",
-        71,
+        75,
     ),
     (
         "declarator -> direct_declarator",
@@ -6355,18 +6355,18 @@ _lr_productions = [
         1,
         "p_declarator",
         "parser.py",
-        72,
+        76,
     ),
-    ("pointer -> TIMES pointer_opt", "pointer", 2, "p_pointer", "parser.py", 77),
-    ("pointer_opt -> pointer", "pointer_opt", 1, "p_pointer_opt", "parser.py", 82),
-    ("pointer_opt -> empty", "pointer_opt", 1, "p_pointer_opt", "parser.py", 83),
+    ("pointer -> TIMES pointer_opt", "pointer", 2, "p_pointer", "parser.py", 81),
+    ("pointer_opt -> pointer", "pointer_opt", 1, "p_pointer_opt", "parser.py", 86),
+    ("pointer_opt -> empty", "pointer_opt", 1, "p_pointer_opt", "parser.py", 87),
     (
         "direct_declarator -> ID",
         "direct_declarator",
         1,
         "p_direct_declarator",
         "parser.py",
-        88,
+        92,
     ),
     (
         "direct_declarator -> LPAREN declarator RPAREN",
@@ -6374,7 +6374,7 @@ _lr_productions = [
         3,
         "p_direct_declarator",
         "parser.py",
-        89,
+        93,
     ),
     (
         "direct_declarator -> direct_declarator LBRACK constant_expression_opt RBRACK",
@@ -6382,7 +6382,7 @@ _lr_productions = [
         4,
         "p_direct_declarator",
         "parser.py",
-        90,
+        94,
     ),
     (
         "direct_declarator -> direct_declarator LPAREN parameter_list RPAREN",
@@ -6390,7 +6390,7 @@ _lr_productions = [
         4,
         "p_direct_declarator",
         "parser.py",
-        91,
+        95,
     ),
     (
         "direct_declarator -> direct_declarator LPAREN identifier_list_opt RPAREN",
@@ -6398,7 +6398,7 @@ _lr_productions = [
         4,
         "p_direct_declarator",
         "parser.py",
-        92,
+        96,
     ),
     (
         "constant_expression -> expr",
@@ -6406,7 +6406,7 @@ _lr_productions = [
         1,
         "p_constant_expression",
         "parser.py",
-        100,
+        104,
     ),
     (
         "constant_expression_opt -> constant_expression",
@@ -6414,7 +6414,7 @@ _lr_productions = [
         1,
         "p_constant_expression_opt",
         "parser.py",
-        104,
+        108,
     ),
     (
         "constant_expression_opt -> empty",
@@ -6422,7 +6422,7 @@ _lr_productions = [
         1,
         "p_constant_expression_opt",
         "parser.py",
-        105,
+        109,
     ),
     (
         "identifier_list -> identifier_list ID",
@@ -6430,7 +6430,7 @@ _lr_productions = [
         2,
         "p_identifier_list",
         "parser.py",
-        110,
+        114,
     ),
     (
         "identifier_list -> ID",
@@ -6438,7 +6438,7 @@ _lr_productions = [
         1,
         "p_identifier_list",
         "parser.py",
-        111,
+        115,
     ),
     (
         "identifier_list_opt -> identifier_list",
@@ -6446,7 +6446,7 @@ _lr_productions = [
         1,
         "p_identifier_list_opt",
         "parser.py",
-        116,
+        120,
     ),
     (
         "identifier_list_opt -> empty",
@@ -6454,29 +6454,29 @@ _lr_productions = [
         1,
         "p_identifier_list_opt",
         "parser.py",
-        117,
+        121,
     ),
-    ("expr -> cast_expression", "expr", 1, "p_expr", "parser.py", 123),
-    ("expr -> expr PLUS expr", "expr", 3, "p_expr", "parser.py", 124),
-    ("expr -> expr MINUS expr", "expr", 3, "p_expr", "parser.py", 125),
-    ("expr -> expr TIMES expr", "expr", 3, "p_expr", "parser.py", 126),
-    ("expr -> expr DIVIDE expr", "expr", 3, "p_expr", "parser.py", 127),
-    ("expr -> expr EQUALS expr", "expr", 3, "p_expr", "parser.py", 128),
-    ("expr -> expr MOD expr", "expr", 3, "p_expr", "parser.py", 129),
-    ("expr -> expr GT expr", "expr", 3, "p_expr", "parser.py", 130),
-    ("expr -> expr GET expr", "expr", 3, "p_expr", "parser.py", 131),
-    ("expr -> expr LT expr", "expr", 3, "p_expr", "parser.py", 132),
-    ("expr -> expr LET expr", "expr", 3, "p_expr", "parser.py", 133),
-    ("expr -> expr DIFF expr", "expr", 3, "p_expr", "parser.py", 134),
-    ("expr -> expr AND expr", "expr", 3, "p_expr", "parser.py", 135),
-    ("expr -> expr OR expr", "expr", 3, "p_expr", "parser.py", 136),
+    ("expr -> cast_expression", "expr", 1, "p_expr", "parser.py", 127),
+    ("expr -> expr PLUS expr", "expr", 3, "p_expr", "parser.py", 128),
+    ("expr -> expr MINUS expr", "expr", 3, "p_expr", "parser.py", 129),
+    ("expr -> expr TIMES expr", "expr", 3, "p_expr", "parser.py", 130),
+    ("expr -> expr DIVIDE expr", "expr", 3, "p_expr", "parser.py", 131),
+    ("expr -> expr EQUALS expr", "expr", 3, "p_expr", "parser.py", 132),
+    ("expr -> expr MOD expr", "expr", 3, "p_expr", "parser.py", 133),
+    ("expr -> expr GT expr", "expr", 3, "p_expr", "parser.py", 134),
+    ("expr -> expr GET expr", "expr", 3, "p_expr", "parser.py", 135),
+    ("expr -> expr LT expr", "expr", 3, "p_expr", "parser.py", 136),
+    ("expr -> expr LET expr", "expr", 3, "p_expr", "parser.py", 137),
+    ("expr -> expr DIFF expr", "expr", 3, "p_expr", "parser.py", 138),
+    ("expr -> expr AND expr", "expr", 3, "p_expr", "parser.py", 139),
+    ("expr -> expr OR expr", "expr", 3, "p_expr", "parser.py", 140),
     (
         "cast_expression -> unary_expression",
         "cast_expression",
         1,
         "p_cast_expression",
         "parser.py",
-        142,
+        146,
     ),
     (
         "cast_expression -> LPAREN type_specifier RPAREN cast_expression",
@@ -6484,7 +6484,7 @@ _lr_productions = [
         4,
         "p_cast_expression",
         "parser.py",
-        143,
+        147,
     ),
     (
         "unary_expression -> postfix_expression",
@@ -6492,7 +6492,7 @@ _lr_productions = [
         1,
         "p_unary_expression",
         "parser.py",
-        149,
+        153,
     ),
     (
         "unary_expression -> PP unary_expression",
@@ -6500,7 +6500,7 @@ _lr_productions = [
         2,
         "p_unary_expression",
         "parser.py",
-        150,
+        154,
     ),
     (
         "unary_expression -> MM unary_expression",
@@ -6508,7 +6508,7 @@ _lr_productions = [
         2,
         "p_unary_expression",
         "parser.py",
-        151,
+        155,
     ),
     (
         "unary_expression -> unary_operator cast_expression",
@@ -6516,7 +6516,7 @@ _lr_productions = [
         2,
         "p_unary_expression",
         "parser.py",
-        152,
+        156,
     ),
     (
         "postfix_expression -> primary_expression",
@@ -6524,7 +6524,7 @@ _lr_productions = [
         1,
         "p_postfix_expression",
         "parser.py",
-        158,
+        162,
     ),
     (
         "postfix_expression -> postfix_expression LBRACK expression RBRACK",
@@ -6532,7 +6532,7 @@ _lr_productions = [
         4,
         "p_postfix_expression",
         "parser.py",
-        159,
+        163,
     ),
     (
         "postfix_expression -> postfix_expression LPAREN argument_expression RPAREN",
@@ -6540,7 +6540,7 @@ _lr_productions = [
         4,
         "p_postfix_expression",
         "parser.py",
-        160,
+        164,
     ),
     (
         "postfix_expression -> postfix_expression LPAREN RPAREN",
@@ -6548,7 +6548,7 @@ _lr_productions = [
         3,
         "p_postfix_expression",
         "parser.py",
-        161,
+        165,
     ),
     (
         "postfix_expression -> postfix_expression PP",
@@ -6556,7 +6556,7 @@ _lr_productions = [
         2,
         "p_postfix_expression",
         "parser.py",
-        162,
+        166,
     ),
     (
         "postfix_expression -> postfix_expression MM",
@@ -6564,7 +6564,7 @@ _lr_productions = [
         2,
         "p_postfix_expression",
         "parser.py",
-        163,
+        167,
     ),
     (
         "primary_expression -> ID",
@@ -6572,7 +6572,7 @@ _lr_productions = [
         1,
         "p_primary_expression",
         "parser.py",
-        176,
+        180,
     ),
     (
         "primary_expression -> constant",
@@ -6580,7 +6580,7 @@ _lr_productions = [
         1,
         "p_primary_expression",
         "parser.py",
-        177,
+        181,
     ),
     (
         "primary_expression -> STRING_LITERAL",
@@ -6588,7 +6588,7 @@ _lr_productions = [
         1,
         "p_primary_expression",
         "parser.py",
-        178,
+        182,
     ),
     (
         "primary_expression -> LPAREN expression RPAREN",
@@ -6596,17 +6596,17 @@ _lr_productions = [
         3,
         "p_primary_expression",
         "parser.py",
-        179,
+        183,
     ),
-    ("constant -> ICONST", "constant", 1, "p_constant", "parser.py", 185),
-    ("constant -> FCONST", "constant", 1, "p_constant", "parser.py", 186),
+    ("constant -> ICONST", "constant", 1, "p_constant", "parser.py", 188),
+    ("constant -> FCONST", "constant", 1, "p_constant", "parser.py", 189),
     (
         "expression -> assignment_expression",
         "expression",
         1,
         "p_expression",
         "parser.py",
-        191,
+        194,
     ),
     (
         "expression -> assignment_expression COMMA expression",
@@ -6614,7 +6614,7 @@ _lr_productions = [
         3,
         "p_expression",
         "parser.py",
-        192,
+        195,
     ),
     (
         "expression_opt -> expression",
@@ -6622,7 +6622,7 @@ _lr_productions = [
         1,
         "p_expression_opt",
         "parser.py",
-        197,
+        200,
     ),
     (
         "expression_opt -> empty",
@@ -6630,7 +6630,7 @@ _lr_productions = [
         1,
         "p_expression_opt",
         "parser.py",
-        198,
+        201,
     ),
     (
         "assignment_expression -> expr",
@@ -6638,7 +6638,7 @@ _lr_productions = [
         1,
         "p_assignment_expression",
         "parser.py",
-        203,
+        206,
     ),
     (
         "assignment_expression -> unary_expression assignment_operator assignment_expression",
@@ -6646,7 +6646,7 @@ _lr_productions = [
         3,
         "p_assignment_expression",
         "parser.py",
-        204,
+        207,
     ),
     (
         "argument_expression -> assignment_expression",
@@ -6654,7 +6654,7 @@ _lr_productions = [
         1,
         "p_argument_expression",
         "parser.py",
-        209,
+        212,
     ),
     (
         "argument_expression -> argument_expression COMMA assignment_expression",
@@ -6662,7 +6662,7 @@ _lr_productions = [
         3,
         "p_argument_expression",
         "parser.py",
-        210,
+        213,
     ),
     (
         "assignment_operator -> ASSIGN",
@@ -6670,7 +6670,7 @@ _lr_productions = [
         1,
         "p_assignment_operator",
         "parser.py",
-        218,
+        221,
     ),
     (
         "assignment_operator -> TASSIGN",
@@ -6678,7 +6678,7 @@ _lr_productions = [
         1,
         "p_assignment_operator",
         "parser.py",
-        219,
+        222,
     ),
     (
         "assignment_operator -> DASSIGN",
@@ -6686,7 +6686,7 @@ _lr_productions = [
         1,
         "p_assignment_operator",
         "parser.py",
-        220,
+        223,
     ),
     (
         "assignment_operator -> MODASSIGN",
@@ -6694,7 +6694,7 @@ _lr_productions = [
         1,
         "p_assignment_operator",
         "parser.py",
-        221,
+        224,
     ),
     (
         "assignment_operator -> PASSIGN",
@@ -6702,7 +6702,7 @@ _lr_productions = [
         1,
         "p_assignment_operator",
         "parser.py",
-        222,
+        225,
     ),
     (
         "assignment_operator -> MINASSIGN",
@@ -6710,7 +6710,7 @@ _lr_productions = [
         1,
         "p_assignment_operator",
         "parser.py",
-        223,
+        226,
     ),
     (
         "unary_operator -> ADDRESS",
@@ -6718,7 +6718,7 @@ _lr_productions = [
         1,
         "p_unary_operator",
         "parser.py",
-        228,
+        231,
     ),
     (
         "unary_operator -> TIMES",
@@ -6726,7 +6726,7 @@ _lr_productions = [
         1,
         "p_unary_operator",
         "parser.py",
-        229,
+        232,
     ),
     (
         "unary_operator -> PLUS",
@@ -6734,7 +6734,7 @@ _lr_productions = [
         1,
         "p_unary_operator",
         "parser.py",
-        230,
+        233,
     ),
     (
         "unary_operator -> MINUS",
@@ -6742,7 +6742,7 @@ _lr_productions = [
         1,
         "p_unary_operator",
         "parser.py",
-        231,
+        234,
     ),
     (
         "unary_operator -> NOT",
@@ -6750,7 +6750,7 @@ _lr_productions = [
         1,
         "p_unary_operator",
         "parser.py",
-        232,
+        235,
     ),
     (
         "parameter_list -> parameter_declaration",
@@ -6758,7 +6758,7 @@ _lr_productions = [
         1,
         "p_parameter_list",
         "parser.py",
-        237,
+        240,
     ),
     (
         "parameter_list -> parameter_list COMMA parameter_declaration",
@@ -6766,7 +6766,7 @@ _lr_productions = [
         3,
         "p_parameter_list",
         "parser.py",
-        238,
+        241,
     ),
     (
         "parameter_declaration -> type_specifier declarator",
@@ -6774,7 +6774,7 @@ _lr_productions = [
         2,
         "p_parameter_declaration",
         "parser.py",
-        243,
+        246,
     ),
     (
         "declaration -> type_specifier init_declarator_list SEMI",
@@ -6782,7 +6782,7 @@ _lr_productions = [
         3,
         "p_declaration",
         "parser.py",
-        248,
+        251,
     ),
     (
         "declaration_list -> declaration",
@@ -6790,7 +6790,7 @@ _lr_productions = [
         1,
         "p_declaration_list",
         "parser.py",
-        254,
+        257,
     ),
     (
         "declaration_list -> declaration_list declaration",
@@ -6798,7 +6798,7 @@ _lr_productions = [
         2,
         "p_declaration_list",
         "parser.py",
-        255,
+        258,
     ),
     (
         "declaration_list_opt -> declaration_list",
@@ -6806,7 +6806,7 @@ _lr_productions = [
         1,
         "p_declaration_list_opt",
         "parser.py",
-        260,
+        263,
     ),
     (
         "declaration_list_opt -> empty",
@@ -6814,7 +6814,7 @@ _lr_productions = [
         1,
         "p_declaration_list_opt",
         "parser.py",
-        261,
+        264,
     ),
     (
         "init_declarator -> declarator",
@@ -6822,7 +6822,7 @@ _lr_productions = [
         1,
         "p_init_declarator",
         "parser.py",
-        266,
+        269,
     ),
     (
         "init_declarator -> declarator ASSIGN initializer",
@@ -6830,7 +6830,7 @@ _lr_productions = [
         3,
         "p_init_declarator",
         "parser.py",
-        267,
+        270,
     ),
     (
         "init_declarator_list -> init_declarator",
@@ -6838,7 +6838,7 @@ _lr_productions = [
         1,
         "p_init_declarator_list",
         "parser.py",
-        272,
+        275,
     ),
     (
         "init_declarator_list -> init_declarator_list COMMA init_declarator",
@@ -6846,7 +6846,7 @@ _lr_productions = [
         3,
         "p_init_declarator_list",
         "parser.py",
-        273,
+        276,
     ),
     (
         "initializer -> assignment_expression",
@@ -6854,7 +6854,7 @@ _lr_productions = [
         1,
         "p_initializer",
         "parser.py",
-        278,
+        281,
     ),
     (
         "initializer -> LBRACE initializer_list RBRACE",
@@ -6862,7 +6862,7 @@ _lr_productions = [
         3,
         "p_initializer",
         "parser.py",
-        279,
+        282,
     ),
     (
         "initializer -> LBRACE initializer_list COMMA RBRACE",
@@ -6870,7 +6870,7 @@ _lr_productions = [
         4,
         "p_initializer",
         "parser.py",
-        280,
+        283,
     ),
     (
         "initializer_list -> initializer",
@@ -6878,7 +6878,7 @@ _lr_productions = [
         1,
         "p_initializer_list",
         "parser.py",
-        285,
+        288,
     ),
     (
         "initializer_list -> initializer_list COMMA initializer",
@@ -6886,7 +6886,7 @@ _lr_productions = [
         3,
         "p_initializer_list",
         "parser.py",
-        286,
+        289,
     ),
     (
         "compound_statement -> LBRACE declaration_list_opt statement_list_opt RBRACE",
@@ -6894,7 +6894,7 @@ _lr_productions = [
         4,
         "p_compound_statement",
         "parser.py",
-        291,
+        294,
     ),
     (
         "statement -> expression_statement",
@@ -6902,7 +6902,7 @@ _lr_productions = [
         1,
         "p_statement",
         "parser.py",
-        302,
+        305,
     ),
     (
         "statement -> compound_statement",
@@ -6910,7 +6910,7 @@ _lr_productions = [
         1,
         "p_statement",
         "parser.py",
-        303,
+        306,
     ),
     (
         "statement -> selection_statement",
@@ -6918,7 +6918,7 @@ _lr_productions = [
         1,
         "p_statement",
         "parser.py",
-        304,
+        307,
     ),
     (
         "statement -> iteration_statement",
@@ -6926,19 +6926,19 @@ _lr_productions = [
         1,
         "p_statement",
         "parser.py",
-        305,
+        308,
     ),
-    ("statement -> jump_statement", "statement", 1, "p_statement", "parser.py", 306),
-    ("statement -> assert_statement", "statement", 1, "p_statement", "parser.py", 307),
-    ("statement -> print_statement", "statement", 1, "p_statement", "parser.py", 308),
-    ("statement -> read_statement", "statement", 1, "p_statement", "parser.py", 309),
+    ("statement -> jump_statement", "statement", 1, "p_statement", "parser.py", 309),
+    ("statement -> assert_statement", "statement", 1, "p_statement", "parser.py", 310),
+    ("statement -> print_statement", "statement", 1, "p_statement", "parser.py", 311),
+    ("statement -> read_statement", "statement", 1, "p_statement", "parser.py", 312),
     (
         "expression_statement -> expression_opt SEMI",
         "expression_statement",
         2,
         "p_expression_statement",
         "parser.py",
-        315,
+        318,
     ),
     (
         "selection_statement -> IF LPAREN expression RPAREN statement",
@@ -6946,7 +6946,7 @@ _lr_productions = [
         5,
         "p_selection_statement",
         "parser.py",
-        320,
+        323,
     ),
     (
         "selection_statement -> IF LPAREN expression RPAREN statement ELSE statement",
@@ -6954,7 +6954,7 @@ _lr_productions = [
         7,
         "p_selection_statement",
         "parser.py",
-        321,
+        324,
     ),
     (
         "iteration_statement -> WHILE LPAREN expression RPAREN statement",
@@ -6962,7 +6962,7 @@ _lr_productions = [
         5,
         "p_iteration_statement",
         "parser.py",
-        326,
+        329,
     ),
     (
         "iteration_statement -> FOR LPAREN expression_opt SEMI expression_opt SEMI expression_opt RPAREN statement",
@@ -6970,7 +6970,7 @@ _lr_productions = [
         9,
         "p_iteration_statement",
         "parser.py",
-        327,
+        330,
     ),
     (
         "iteration_statement -> FOR LPAREN declaration expression_opt SEMI expression_opt RPAREN statement",
@@ -6978,7 +6978,7 @@ _lr_productions = [
         8,
         "p_iteration_statement",
         "parser.py",
-        328,
+        331,
     ),
     (
         "jump_statement -> BREAK SEMI",
@@ -6986,7 +6986,7 @@ _lr_productions = [
         2,
         "p_jump_statement",
         "parser.py",
-        338,
+        341,
     ),
     (
         "jump_statement -> RETURN expression_opt SEMI",
@@ -6994,7 +6994,7 @@ _lr_productions = [
         3,
         "p_jump_statement",
         "parser.py",
-        339,
+        342,
     ),
     (
         "assert_statement -> ASSERT expr SEMI",
@@ -7002,7 +7002,7 @@ _lr_productions = [
         3,
         "p_assert_statement",
         "parser.py",
-        344,
+        347,
     ),
     (
         "print_statement -> PRINT LPAREN expression_opt RPAREN SEMI",
@@ -7010,7 +7010,7 @@ _lr_productions = [
         5,
         "p_print_statement",
         "parser.py",
-        348,
+        351,
     ),
     (
         "read_statement -> READ LPAREN argument_expression RPAREN SEMI",
@@ -7018,7 +7018,7 @@ _lr_productions = [
         5,
         "p_read_statement",
         "parser.py",
-        353,
+        356,
     ),
     (
         "statement_list -> statement_list statement",
@@ -7026,7 +7026,7 @@ _lr_productions = [
         2,
         "p_statement_list",
         "parser.py",
-        357,
+        360,
     ),
     (
         "statement_list -> statement",
@@ -7034,7 +7034,7 @@ _lr_productions = [
         1,
         "p_statement_list",
         "parser.py",
-        358,
+        361,
     ),
     (
         "statement_list_opt -> statement_list",
@@ -7042,7 +7042,7 @@ _lr_productions = [
         1,
         "p_statement_list_opt",
         "parser.py",
-        366,
+        369,
     ),
     (
         "statement_list_opt -> empty",
@@ -7050,6 +7050,6 @@ _lr_productions = [
         1,
         "p_statement_list_opt",
         "parser.py",
-        367,
+        370,
     ),
 ]

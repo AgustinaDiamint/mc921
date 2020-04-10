@@ -1,5 +1,6 @@
 import ply.yacc as yacc
 from projeto1.lexer import UCLexer
+from projeto1.ast import *
 import logging
 
 
@@ -44,7 +45,7 @@ class UCParser:
     def p_program(self, p):
         """ program  : global_declaration_list
         """
-        p[0] = ("program", p[1])
+        p[0] = Program(p[1])
 
     def p_global_declaration_list(self, p):
         """ global_declaration_list : global_declaration
@@ -58,7 +59,7 @@ class UCParser:
         """
         p[0] = p[1]
 
-    def p_function_defnition(self, p):
+    def p_function_definition(self, p):
         """ function_definition : type_specifier declarator declaration_list_opt compound_statement """
         p[0] = (p[1], p[2], p[3], p[4])
 
@@ -138,7 +139,7 @@ class UCParser:
                 | expr AND expr
                 | expr OR expr
         """
-        p[0] = p[1] if len(p) == 2 else (p[2], p[1], p[3])
+        p[0] = (p[1]) if len(p) == 2 else BinaryOp(p[2], p[1], p[3])
 
     def p_cast_expression(self, p):
         """
@@ -175,7 +176,7 @@ class UCParser:
             p[0] = (p[1], p[2])
 
     def p_primary_expression(self, p):
-        """
+        """ 
         primary_expression : ID
                             | constant
                             | STRING_LITERAL
@@ -239,7 +240,7 @@ class UCParser:
         """parameter_list : parameter_declaration
                         | parameter_list COMMA parameter_declaration
         """
-        p[0] = p[1] if len(p) == 2 else (p[1], p[3])
+        p[0] = [p[1]] if len(p) == 2 else p[1] + [p[3]]
 
     def p_parameter_declaration(self, p):
         """ parameter_declaration : type_specifier declarator
@@ -274,14 +275,14 @@ class UCParser:
         """ init_declarator_list : init_declarator
                                 | init_declarator_list COMMA init_declarator
         """
-        p[0] = [p[1]] if len(p) == 2 else p[1] + [p[2]]
+        p[0] = [p[1]] if len(p) == 2 else p[1] + [p[3]]
 
     def p_initializer(self, p):
         """initializer : assignment_expression
                     | LBRACE initializer_list RBRACE
                     | LBRACE initializer_list COMMA RBRACE
         """
-        p[0] = p[1] if len(p) == 2 else p[3]
+        p[0] = p[1] if len(p) == 2 else p[2]
 
     def p_initializer_list(self, p):
         """ initializer_list : initializer
@@ -353,7 +354,7 @@ class UCParser:
 
     def p_read_statement(self, p):
         """read_statement : READ LPAREN argument_expression RPAREN SEMI"""
-        p[0] = ("READ", p[2])
+        p[0] = ("read", p[2])
 
     def p_statement_list(self, p):
         """ statement_list : statement_list statement

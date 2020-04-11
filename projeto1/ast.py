@@ -136,19 +136,16 @@ class ArrayRef(Node):
 
 
 class Assert(Node):
-    __slots__ = ("lvalue", "rvalue", "coord")
+    __slots__ = ("expr", "coord")
 
-    def __init__(self, lvalue, rvalue, coord=None):
-        self.lvalue = lvalue
-        self.rvalue = rvalue
+    def __init__(self, expr, coord=None):
+        self.expr = expr
         self.coord = coord
 
     def children(self):
         nodelist = []
-        if self.lvalue is not None:
-            nodelist.append(("lvalue", self.lvalue))
-        if self.rvalue is not None:
-            nodelist.append(("rvalue", self.rvalue))
+        if self.expr is not None:
+            nodelist.append(("expr", self.expr))
         return tuple(nodelist)
 
     attr_names = ()
@@ -241,9 +238,9 @@ class Compound(Node):
 
     def children(self):
         nodelist = []
-        for idx, dec in enumerate(self.declaration_list):
+        for idx, dec in enumerate(self.declaration_list or []):
             nodelist.append(("declaration_list[%d]" % idx, dec))
-        for idx, state in enumerate(self.statement_list):
+        for idx, state in enumerate(self.statement_list or []):
             nodelist.append(("statement_list[%d]" % idx, state))
         return tuple(nodelist)
 
@@ -467,7 +464,7 @@ class ID(Node):
 
 
 class If(Node):
-    __slots__ = ("cond", "if_true", "if_false", "coord", "__weakref__")
+    __slots__ = ("cond", "if_true", "if_false", "coord")
 
     def __init__(self, cond, if_true, if_false, coord=None):
         self.cond = cond
@@ -624,8 +621,6 @@ class UnaryOp(Node):
 
     def children(self):
         nodelist = []
-        if self.operator is not None:
-            nodelist.append(("operator", self.operator))
         if self.expr is not None:
             nodelist.append(("expr", self.expr))
         return tuple(nodelist)
@@ -765,37 +760,35 @@ def _repr(obj):
 
 
 """
-types = [
-   x ArrayDecl(),
-   x ArrayRef(),
-   x Assert(),
-   x Assignment(op),
-   x BinaryOp(op),
-   x Break(),
-   x Cast(),
-   x Compound(),
-   x Constant(type, value),
-   x Decl(name),
-   x DeclList(),
-   x EmptyStatement(),
-   x ExprList(),
-   x For(),
-   x FuncCall(),
-   x FuncDecl(),
-   x FuncDef(),
-   x GlobalDecl(),
-   x ID(name),
-   x If(),
-   x InitList(),
-   x ParamList(),
-   x Print(),
-   x Program(),
-   x PtrDecl(),
-   x Read(),
-   x Return(),
-   x Type(names),
-   x VarDecl(),
-   x UnaryOp(op),
-   x While(),
-]
+    ArrayDecl(),
+    ArrayRef(),
+    Assert(),
+    Assignment(op),
+    BinaryOp(op),
+    Break(),
+    Cast(),
+    Compound(),
+    Constant(type, value),
+    Decl(name),
+    DeclList(),
+    EmptyStatement(),
+    ExprList(),
+    For(),
+    FuncCall(),
+    FuncDecl(),
+    FuncDef(),
+    GlobalDecl(),
+    ID(name),
+    If(),
+    InitList(),
+    ParamList(),
+    Print(),
+    Program(),
+    PtrDecl(),
+    Read(),
+    Return(),
+    Type(names),
+    VarDecl(),
+    UnaryOp(op),
+    While(),
 """

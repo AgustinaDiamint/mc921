@@ -105,7 +105,8 @@ class Coord(object):
             - Line number
             - (optional) column number, for the Lexer
     """
-    __slots__ = ('line', 'column')
+
+    __slots__ = ("line", "column")
 
     def __init__(self, line, column=None):
         self.line = line
@@ -119,10 +120,10 @@ class Coord(object):
         return coord_str
 
     def _token_coord(self, p, token_idx):
-        last_cr = p.lexer.lexer.lexdata.rfind('\n', 0, p.lexpos(token_idx))
+        last_cr = p.lexer.lexer.lexdata.rfind("\n", 0, p.lexpos(token_idx))
         if last_cr < 0:
             last_cr = -1
-        column = (p.lexpos(token_idx) - (last_cr))
+        column = p.lexpos(token_idx) - (last_cr)
         return Coord(p.lineno(token_idx), column)
 
 
@@ -520,8 +521,8 @@ class InitList(Node):
 
     def children(self):
         nodelist = []
-        for i, dec in enumerate(self.initializer or []):
-            nodelist.append(("initializer[%d]" % i, dec))
+        for i, init in enumerate(self.initializer or []):
+            nodelist.append(("initializer[%d]" % i, init))
         return tuple(nodelist)
 
     attr_names = ()

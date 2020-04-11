@@ -1,7 +1,6 @@
 import ply.yacc as yacc
-from projeto1.lexer import UCLexer
-import projeto1.ast as ast
-import logging
+from lexer import UCLexer
+import ast
 
 
 def print_error(msg, x, y):
@@ -13,30 +12,15 @@ class UCParser:
         # initial state
         self.start = "program"
 
-        logging.basicConfig(
-            level=logging.DEBUG,
-            filename="lexer_log.txt",
-            filemode="w",
-            format="%(filename)10s:%(lineno)4d:%(message)s",
-        )
-        log_lexer = logging.getLogger()
-
-        logging.basicConfig(
-            level=logging.DEBUG,
-            filename="parser_log.txt",
-            filemode="w",
-            format="%(filename)10s:%(lineno)4d:%(message)s",
-        )
-        log_parser = logging.getLogger()
-
         # lexer
         self.lexer = UCLexer(print_error)
-        self.lexer.build(debug=True, debuglog=log_lexer)
+        self.lexer.build()
         self.tokens = self.lexer.tokens
 
-        self.parser = yacc.yacc(
-            module=self, start=self.start, debug=True, debuglog=log_parser
-        )
+        self.parser = yacc.yacc(module=self, start=self.start, debug=True)
+
+    def parse(self, input, ast_file, debug=False):
+        self.parser.parse(input, debug=debug),
 
     def p_empty(self, p):
         """empty : """
@@ -45,6 +29,7 @@ class UCParser:
     def p_program(self, p):
         """ program  : global_declaration_list
         """
+        ast.Program(p[1]).show()
         p[0] = ast.Program(p[1])
 
     def p_global_declaration_list(self, p):
@@ -69,7 +54,7 @@ class UCParser:
                            | INT
                            | FLOAT
         """
-        p[0] = ast.Type(p[1]) if len(p) == 2 else None
+        p[0] = ast.Type(p[1], coord=_token_coord(self, p, 1)) if len(p) == 2 else None
 
     def p_declarator(self, p):
         """ declarator : pointer direct_declarator
@@ -96,7 +81,7 @@ class UCParser:
                       | direct_declarator LPAREN identifier_list_opt RPAREN
         """
         if len(p) == 2:
-            p[0] = ast.ID(p[1])
+            p[0] = ast.ID(p[1], coord=_token_coord(self, p, 1))
         else:
             p[0] = (p[1], p[3])
 
@@ -114,7 +99,11 @@ class UCParser:
         """ identifier_list : identifier_list ID
                             | ID
         """
-        p[0] = ast.ID([p[1]]) if len(p) == 2 else p[1] + [ast.ID(p[2])]
+        p[0] = (
+            ast.ID([p[1]], coord=_token_coord(self, p, 1))
+            if len(p) == 2
+            else p[1] + [ast.ID(p[2], coord=_token_coord(self, p, 2))]
+        )
 
     def p_identifier_list_opt(self, p):
         """ identifier_list_opt : identifier_list
@@ -139,14 +128,18 @@ class UCParser:
                 | expr AND expr
                 | expr OR expr
         """
-        p[0] = (p[1]) if len(p) == 2 else ast.BinaryOp(p[2], p[1], p[3])
+        p[0] = (
+            (p[1])
+            if len(p) == 2
+            else ast.BinaryOp(p[2], p[1], p[3], coord=_token_coord(self, p, 2))
+        )
 
     def p_cast_expression(self, p):
         """
         cast_expression : unary_expression
                     | LPAREN type_specifier RPAREN cast_expression
         """
-        p[0] = p[1] if len(p) == 2 else ast.Cast(p[2], p[4])
+        p[0] = p[1] if len(p) == 2 else ast.Cast(p[2], p[4], coord=_token_coord(self, p, 2))
 
     def p_unary_expression(self, p):
         """
@@ -159,9 +152,9 @@ class UCParser:
         if len(p) == 2:
             p[0] = p[1]
         elif tok.type == "PP":
-            ast.UnaryOp("++", p[2])
+            ast.UnaryOp("++", p[2], coord=_token_coord(self, p, 1))
         elif tok.type == "MM":
-            ast.UnaryOp("--", p[2])
+            ast.UnaryOp("--", p[2], coord=_token_coord(self, p, 1))
         else:
             p[0] = (p[1], p[2])
 
@@ -183,9 +176,9 @@ class UCParser:
         elif len(p) == 5:
             p[0] = (p[1], [3])
         elif len(p) == 3 and tok.type == "PP":
-            p[0] = ast.UnaryOp("p++", p[1])
+            p[0] = ast.UnaryOp("p++", p[1], coord=_token_coord(self, p, 2))
         elif len(p) == 3 and tok.type == "MM":
-            p[0] = ast.UnaryOp("p--", p[1])
+            p[0] = ast.UnaryOp("p--", p[1], coord=_token_coord(self, p, 2))
 
     def p_primary_expression(self, p):
         """
@@ -198,9 +191,9 @@ class UCParser:
 
         if len(p) == 2:
             if tok.type == "ID":
-                p[0] = ast.ID(p[1])
+                p[0] = ast.ID(p[1], coord=_token_coord(self, p, 1))
             elif tok.type == "STRING_LITERAL":
-                p[0] = ast.Constant("string", p[1])
+                p[0] = ast.Constant("string", p[1], coord=_token_coord(self, p, 1))
             else:
                 p[0] = p[1]
         else:
@@ -212,9 +205,9 @@ class UCParser:
         """
         tok = self.lexer.token()
         if tok.type == "ICONST":
-            p[0] = ast.Constant("int", p[1])
+            p[0] = ast.Constant("int", p[1], coord=_token_coord(self, p, 1))
         else:
-            p[0] = ast.Constant("float", p[1])
+            p[0] = ast.Constant("float", p[1], coord=_token_coord(self, p, 1))
 
     def p_expression(self, p):
         """ expression : assignment_expression
@@ -232,7 +225,11 @@ class UCParser:
         """assignment_expression : expr
                             | unary_expression assignment_operator assignment_expression
         """
-        p[0] = p[1] if len(p) == 2 else ast.Assignment(p[2], p[1], p[3])
+        p[0] = (
+            p[1]
+            if len(p) == 2
+            else ast.Assignment(p[2], p[1], p[3], coord=_token_coord(self, p, 2))
+        )
 
     def p_argument_expression(self, p):
         """argument_expression : assignment_expression
@@ -266,7 +263,11 @@ class UCParser:
         """parameter_list : parameter_declaration
                           | parameter_list COMMA parameter_declaration
         """
-        p[0] = [p[1]] if len(p) == 2 else ast.ParamList(p[1] + [p[3]])
+        p[0] = (
+            [p[1]]
+            if len(p) == 2
+            else ast.ParamList(p[1] + [p[3]], coord=_token_coord(self, p, 1))
+        )
 
     def p_parameter_declaration(self, p):
         """ parameter_declaration : type_specifier declarator
@@ -313,15 +314,19 @@ class UCParser:
         """ initializer_list : initializer
                     | initializer_list COMMA initializer
         """
-        p[0] = [p[1]] if len(p) == 2 else ast.InitList(p[1] + [p[3]])
+        p[0] = (
+            [p[1]]
+            if len(p) == 2
+            else ast.InitList(p[1] + [p[3]], coord=_token_coord(self, p, 1))
+        )
 
     def p_compound_statement(self, p):
         """compound_statement : LBRACE declaration_list_opt statement_list_opt RBRACE
         """
         if len(p) == 5:
-            p[0] = ast.Compound(p[2], p[3])
+            p[0] = ast.Compound(p[2], p[3], coord=_token_coord(self, p, 1))
         elif len(p) == 4:
-            p[0] == ast.Compound(p[2])
+            p[0] == ast.Compound(p[2], coord=_token_coord(self, p, 1))
         else:
             p[0] = None
 
@@ -348,7 +353,11 @@ class UCParser:
         """    selection_statement : IF LPAREN expression RPAREN statement
                                     | IF LPAREN expression RPAREN statement ELSE statement
         """
-        p[0] = ast.If(p[3], p[5], None) if len(p) == 5 else ast.If(p[3], p[5], p[7])
+        p[0] = (
+            ast.If(p[3], p[5], None, coord=_token_coord(self, p, 3))
+            if len(p) == 5
+            else ast.If(p[3], p[5], p[7], coord=_token_coord(self, p, 3))
+        )
 
     def p_iteration_statement(self, p):
         """    iteration_statement : WHILE LPAREN expression RPAREN statement
@@ -356,33 +365,33 @@ class UCParser:
                                     | FOR LPAREN declaration expression_opt SEMI expression_opt RPAREN statement
         """
         if len(p) == 6:
-            p[0] = ast.While(p[3], p[5])
+            p[0] = ast.While(p[3], p[5], coord=_token_coord(self, p, 3))
         elif len(p) == 10:
-            p[0] = ast.For(p[3], p[5], p[7], p[9])
+            p[0] = ast.For(p[3], p[5], p[7], p[9], coord=_token_coord(self, p, 3))
         else:
-            p[0] = ast.For(p[3], p[4], p[6], p[8])
+            p[0] = ast.For(p[3], p[4], p[6], p[8], coord=_token_coord(self, p, 3))
 
     def p_jump_statement(self, p):
         """jump_statement : BREAK SEMI
                         | RETURN expression_opt SEMI
         """
         if len(p) == 3:
-            p[0] = ast.Break()
+            p[0] = ast.Break(coord=_token_coord(self, p, 1))
         else:
-            p[0] = ast.Return(p[2])
+            p[0] = ast.Return(p[2], coord=_token_coord(self, p, 2))
 
     def p_assert_statement(self, p):
         """ assert_statement : ASSERT expr SEMI """
-        p[0] = ast.Assert(p[2])
+        p[0] = ast.Assert(p[2], coord=_token_coord(self, p, 2))
 
     def p_print_statement(self, p):
         """ print_statement : PRINT LPAREN expression_opt RPAREN SEMI
         """
-        p[0] = ast.Print(p[3])
+        p[0] = ast.Print(p[3], coord=_token_coord(self, p, 3))
 
     def p_read_statement(self, p):
         """read_statement : READ LPAREN argument_expression RPAREN SEMI"""
-        p[0] = ast.Read(p[2])
+        p[0] = ast.Read(p[2], coord=_token_coord(self, p, 2))
 
     def p_statement_list(self, p):
         """ statement_list : statement_list statement
@@ -415,9 +424,17 @@ class UCParser:
     )
 
 
+def _token_coord(self, p, token_idx):
+    last_cr = p.lexer.lexdata.rfind("\n", 0, p.lexpos(token_idx))
+    if last_cr < 0:
+        last_cr = -1
+    column = p.lexpos(token_idx) - (last_cr)
+    return ast.Coord(p.lineno(token_idx), column)
+
+
 if __name__ == "__main__":
 
     import sys
 
     uc_parser = UCParser()
-    uc_parser.parser.parse(open(sys.argv[1]).read())  # print tokens
+    uc_parser.parse(open(sys.argv[1]).read(), "", debug=True)  # print tokens

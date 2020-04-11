@@ -55,7 +55,7 @@ class UCParser:
 
     def p_global_declaration(self, p):
         """global_declaration : function_definition
-                              | declaration 
+                              | declaration
         """
         p[0] = p[1]
 
@@ -176,7 +176,7 @@ class UCParser:
             p[0] = (p[1], p[2])
 
     def p_primary_expression(self, p):
-        """ 
+        """
         primary_expression : ID
                             | constant
                             | STRING_LITERAL
@@ -249,7 +249,7 @@ class UCParser:
 
     def p_declaration(self, p):
 
-        """declaration : type_specifier init_declarator_list SEMI 
+        """declaration : type_specifier init_declarator_list SEMI
         """
         p[0] = (p[1], p[2])
 

@@ -4,7 +4,7 @@ import sys
 class Node(object):
     """
     Base class example for the AST nodes.
-    
+
     By default, instances of classes have a dictionary for attribute storage.
     This wastes space for objects having very few instance variables.
     The space consumption can become acute when creating large numbers of instances.
@@ -116,15 +116,39 @@ class ArrayDecl(Node):
     attr_names = ()
 
 
-# TODO
 class ArrayRef(Node):
-    __slots__ = "coord"
+    __slots__ = ("array", "idx", "coord")
 
-    def __init__(self, coord=None):
+    def __init__(self, array, idx, coord=None):
+        self.array = array
+        self.idx = idx
         self.coord = coord
 
     def children(self):
         nodelist = []
+        if self.array is not None:
+            nodelist.append(("array", self.array))
+        if self.idx is not None:
+            nodelist.append(("idx", self.idx))
+        return tuple(nodelist)
+
+    attr_names = ()
+
+
+class Assert(Node):
+    __slots__ = ("lvalue", "rvalue", "coord")
+
+    def __init__(self, lvalue, rvalue, coord=None):
+        self.lvalue = lvalue
+        self.rvalue = rvalue
+        self.coord = coord
+
+    def children(self):
+        nodelist = []
+        if self.lvalue is not None:
+            nodelist.append(("lvalue", self.lvalue))
+        if self.rvalue is not None:
+            nodelist.append(("rvalue", self.rvalue))
         return tuple(nodelist)
 
     attr_names = ()
@@ -175,6 +199,57 @@ class BinaryOp(Node):
     attr_names = ("op",)
 
 
+class Break(Node):
+    __slots__ = "coord"
+
+    def __init__(self, coord=None):
+        self.coord = coord
+
+    def children(self):
+        return None
+
+    attr_names = ()
+
+
+class Cast(Node):
+    __slots__ = ("type", "expr", "coord")
+
+    def __init__(self, type, expr, coord=None):
+        self.type = type
+        self.expr = expr
+        self.coord = coord
+
+    def children(self):
+        nodelist = []
+        if self.type is not None:
+            nodelist.append(("type", self.type))
+        if self.expr is not None:
+            nodelist.append(("expr", self.expr))
+
+        return tuple(nodelist)
+
+    attr_names = ()
+
+
+class Compound(Node):
+    __slots__ = ("declaration_list", "statement_list", "coord")
+
+    def __init__(self, declaration_list, statement_list, coord=None):
+        self.declaration_list = declaration_list
+        self.statement_list = statement_list
+        self.coord = coord
+
+    def children(self):
+        nodelist = []
+        for idx, dec in enumerate(self.declaration_list):
+            nodelist.append(("declaration_list[%d]" % idx, dec))
+        for idx, state in enumerate(self.statement_list):
+            nodelist.append(("statement_list[%d]" % idx, state))
+        return tuple(nodelist)
+
+    attr_names = ()
+
+
 class Constant(Node):
     __slots__ = ("type", "value", "coord")
 
@@ -193,23 +268,48 @@ class Constant(Node):
     )
 
 
-class Assert(Node):
-    __slots__ = ("lvalue", "rvalue", "coord")
+class Decl(Node):
+    __slots__ = ("type", "name", "init", "coord")
 
-    def __init__(self, lvalue, rvalue, coord=None):
-        self.lvalue = lvalue
-        self.rvalue = rvalue
+    def __init__(self, type, name, init, coord=None):
+        self.type = type
+        self.name = name
+        self.init = init
         self.coord = coord
 
     def children(self):
         nodelist = []
-        if self.lvalue is not None:
-            nodelist.append(("lvalue", self.lvalue))
-        if self.rvalue is not None:
-            nodelist.append(("rvalue", self.rvalue))
+        if self.type is not None:
+            nodelist.append(("type", self.type))
+        if self.name is not None:
+            nodelist.append(("name", self.name))
+        if self.init is not None:
+            nodelist.append(("init", self.init))
         return tuple(nodelist)
 
-    attr_names = ()
+    atrr_names = ("name",)
+
+
+class DeclList(Node):
+    __slots__ = ("type", "name_list", "init", "coord")
+
+    def __init__(self, type, name_list, init, coord=None):
+        self.type = type
+        self.name_list = name_list
+        self.init = init
+        self.coord = coord
+
+    def children(self):
+        nodelist = []
+        if self.type is not None:
+            nodelist.append(("type", self.type))
+        for idx, name in enumerate(self.name_list):
+            nodelist.append(("names[%d]" % idx, name))
+        if self.init is not None:
+            nodelist.append(("init", self.init))
+        return tuple(nodelist)
+
+    atrr_names = ()
 
 
 class EmptyStatement(Node):
@@ -666,17 +766,17 @@ def _repr(obj):
 
 """
 types = [
-    ArrayDecl(),
-    ArrayRef(),
+   x ArrayDecl(),
+   x ArrayRef(),
    x Assert(),
    x Assignment(op),
    x BinaryOp(op),
-    Break(),
-    Cast(),
-    Compound(),
+   x Break(),
+   x Cast(),
+   x Compound(),
    x Constant(type, value),
-    Decl(name),
-    DeclList(),
+   x Decl(name),
+   x DeclList(),
    x EmptyStatement(),
    x ExprList(),
    x For(),

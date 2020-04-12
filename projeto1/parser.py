@@ -84,7 +84,9 @@ class UCParser:
             p[0] = ast.VarDecl(None, p[1], coord=_token_coord(self, p, 1))
         elif len(p) == 3:
             p[0] = p[2]
+
     # TODO arraydecl(type = direct_declarator)
+
     def p_direct_declarator_2(self, p):
         """ direct_declarator : direct_declarator LBRACK constant_expression_opt RBRACK
         """
@@ -338,7 +340,7 @@ class UCParser:
         """init_declarator : declarator
                            | declarator ASSIGN initializer
         """
-        p[0] = {"decl" : p[1]} if len(p) == 2 else { "decl": p[1], "init": p[3]}
+        p[0] = {"decl": p[1]} if len(p) == 2 else {"decl": p[1], "init": p[3]}
 
     def p_init_declarator_list(self, p):
         """ init_declarator_list : init_declarator

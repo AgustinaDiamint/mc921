@@ -128,16 +128,19 @@ class Coord(object):
 
 
 class ArrayDecl(Node):
-    __slots__ = ("decl", "coord")
+    __slots__ = ("decl", "type", "coord")
 
-    def __init__(self, decl, coord=None):
+    def __init__(self, decl, type, coord=None):
         self.coord = coord
         self.decl = decl
+        self.type = type
 
     def children(self):
         nodelist = []
         if self.decl is not None:
-            nodelist.append(self.decl)
+            nodelist.append("decl", self.decl)
+        if self.type is not None:
+            nodelist.append("type", self.type)
         return tuple(nodelist)
 
     attr_names = ()
@@ -230,7 +233,7 @@ class Break(Node):
         self.coord = coord
 
     def children(self):
-        return None
+        return ()
 
     attr_names = ()
 
@@ -249,7 +252,6 @@ class Cast(Node):
             nodelist.append(("type", self.type))
         if self.expr is not None:
             nodelist.append(("expr", self.expr))
-
         return tuple(nodelist)
 
     attr_names = ()
@@ -601,7 +603,7 @@ class Read(Node):
     def children(self):
         nodelist = []
         if self.argument_expression is not None:
-            nodelist.append(self.argument_expression)
+            nodelist.append(("argument_expression", self.argument_expression))
         return tuple(nodelist)
 
     attr_names = ()
@@ -632,8 +634,6 @@ class Type(Node):
 
     def children(self):
         nodelist = []
-        for idx, name in enumerate(self.names or []):
-            nodelist.append(("names[%d]" % idx, name))
         return tuple(nodelist)
 
     attr_names = ("names",)
@@ -657,20 +657,19 @@ class UnaryOp(Node):
 
 
 class VarDecl(Node):
-    __slots__ = ("type", "name", "coord")
+    __slots__ = ("type", "declname", "coord")
 
-    def __init__(self, type, name, coord=None):
+    def __init__(self, type, declname, coord=None):
         self.type = type
-        self.name = name
+        self.declname = declname
         self.coord = coord
 
     def children(self):
         nodelist = []
         if self.type is not None:
-            nodelist.append(self.type)
+            nodelist.append(("type", self.type))
         if self.name is not None:
-            nodelist.append(self.name)
-
+            nodelist.append(("declname", self.declname))
         return tuple(nodelist)
 
     attr_names = ()

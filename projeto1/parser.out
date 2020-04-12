@@ -74,7 +74,7 @@ Rule 59    primary_expression -> LPAREN expression RPAREN
 Rule 60    constant -> ICONST
 Rule 61    constant -> FCONST
 Rule 62    expression -> assignment_expression
-Rule 63    expression -> assignment_expression COMMA expression
+Rule 63    expression -> expression COMMA assignment_expression
 Rule 64    expression_opt -> expression
 Rule 65    expression_opt -> empty
 Rule 66    assignment_expression -> expr
@@ -1524,7 +1524,7 @@ state 52
     (10) type_specifier -> . INT
     (11) type_specifier -> . FLOAT
     (62) expression -> . assignment_expression
-    (63) expression -> . assignment_expression COMMA expression
+    (63) expression -> . expression COMMA assignment_expression
     (66) assignment_expression -> . expr
     (67) assignment_expression -> . unary_expression assignment_operator assignment_expression
     (30) expr -> . cast_expression
@@ -2080,7 +2080,7 @@ state 76
     (64) expression_opt -> . expression
     (65) expression_opt -> . empty
     (62) expression -> . assignment_expression
-    (63) expression -> . assignment_expression COMMA expression
+    (63) expression -> . expression COMMA assignment_expression
     (66) assignment_expression -> . expr
     (67) assignment_expression -> . unary_expression assignment_operator assignment_expression
     (30) expr -> . cast_expression
@@ -3339,7 +3339,7 @@ state 102
 
     (55) postfix_expression -> postfix_expression LBRACK . expression RBRACK
     (62) expression -> . assignment_expression
-    (63) expression -> . assignment_expression COMMA expression
+    (63) expression -> . expression COMMA assignment_expression
     (66) assignment_expression -> . expr
     (67) assignment_expression -> . unary_expression assignment_operator assignment_expression
     (30) expr -> . cast_expression
@@ -3469,7 +3469,7 @@ state 105
 
     (59) primary_expression -> LPAREN . expression RPAREN
     (62) expression -> . assignment_expression
-    (63) expression -> . assignment_expression COMMA expression
+    (63) expression -> . expression COMMA assignment_expression
     (66) assignment_expression -> . expr
     (67) assignment_expression -> . unary_expression assignment_operator assignment_expression
     (30) expr -> . cast_expression
@@ -3575,19 +3575,20 @@ state 107
 state 108
 
     (59) primary_expression -> LPAREN expression . RPAREN
+    (63) expression -> expression . COMMA assignment_expression
 
     RPAREN          shift and go to state 159
+    COMMA           shift and go to state 160
 
 
 state 109
 
     (62) expression -> assignment_expression .
-    (63) expression -> assignment_expression . COMMA expression
 
     RPAREN          reduce using rule 62 (expression -> assignment_expression .)
+    COMMA           reduce using rule 62 (expression -> assignment_expression .)
     SEMI            reduce using rule 62 (expression -> assignment_expression .)
     RBRACK          reduce using rule 62 (expression -> assignment_expression .)
-    COMMA           shift and go to state 160
 
 
 state 110
@@ -3708,7 +3709,7 @@ state 117
     (64) expression_opt -> . expression
     (65) expression_opt -> . empty
     (62) expression -> . assignment_expression
-    (63) expression -> . assignment_expression COMMA expression
+    (63) expression -> . expression COMMA assignment_expression
     (1) empty -> .
     (66) assignment_expression -> . expr
     (67) assignment_expression -> . unary_expression assignment_operator assignment_expression
@@ -4093,9 +4094,11 @@ state 129
 state 130
 
     (64) expression_opt -> expression .
+    (63) expression -> expression . COMMA assignment_expression
 
     SEMI            reduce using rule 64 (expression_opt -> expression .)
     RPAREN          reduce using rule 64 (expression_opt -> expression .)
+    COMMA           shift and go to state 160
 
 
 state 131
@@ -4126,7 +4129,7 @@ state 134
     (64) expression_opt -> . expression
     (65) expression_opt -> . empty
     (62) expression -> . assignment_expression
-    (63) expression -> . assignment_expression COMMA expression
+    (63) expression -> . expression COMMA assignment_expression
     (1) empty -> .
     (66) assignment_expression -> . expr
     (67) assignment_expression -> . unary_expression assignment_operator assignment_expression
@@ -5085,8 +5088,10 @@ state 156
 state 157
 
     (55) postfix_expression -> postfix_expression LBRACK expression . RBRACK
+    (63) expression -> expression . COMMA assignment_expression
 
     RBRACK          shift and go to state 178
+    COMMA           shift and go to state 160
 
 
 state 158
@@ -5174,9 +5179,7 @@ state 159
 
 state 160
 
-    (63) expression -> assignment_expression COMMA . expression
-    (62) expression -> . assignment_expression
-    (63) expression -> . assignment_expression COMMA expression
+    (63) expression -> expression COMMA . assignment_expression
     (66) assignment_expression -> . expr
     (67) assignment_expression -> . unary_expression assignment_operator assignment_expression
     (30) expr -> . cast_expression
@@ -5231,8 +5234,7 @@ state 160
     ICONST          shift and go to state 59
     FCONST          shift and go to state 60
 
-    assignment_expression          shift and go to state 109
-    expression                     shift and go to state 180
+    assignment_expression          shift and go to state 180
     expr                           shift and go to state 42
     unary_expression               shift and go to state 43
     cast_expression                shift and go to state 44
@@ -5357,7 +5359,7 @@ state 166
     (108) selection_statement -> IF LPAREN . expression RPAREN statement
     (109) selection_statement -> IF LPAREN . expression RPAREN statement ELSE statement
     (62) expression -> . assignment_expression
-    (63) expression -> . assignment_expression COMMA expression
+    (63) expression -> . expression COMMA assignment_expression
     (66) assignment_expression -> . expr
     (67) assignment_expression -> . unary_expression assignment_operator assignment_expression
     (30) expr -> . cast_expression
@@ -5427,7 +5429,7 @@ state 167
 
     (110) iteration_statement -> WHILE LPAREN . expression RPAREN statement
     (62) expression -> . assignment_expression
-    (63) expression -> . assignment_expression COMMA expression
+    (63) expression -> . expression COMMA assignment_expression
     (66) assignment_expression -> . expr
     (67) assignment_expression -> . unary_expression assignment_operator assignment_expression
     (30) expr -> . cast_expression
@@ -5501,7 +5503,7 @@ state 168
     (65) expression_opt -> . empty
     (84) declaration -> . type_specifier init_declarator_list SEMI
     (62) expression -> . assignment_expression
-    (63) expression -> . assignment_expression COMMA expression
+    (63) expression -> . expression COMMA assignment_expression
     (1) empty -> .
     (8) type_specifier -> . VOID
     (9) type_specifier -> . CHAR
@@ -5657,7 +5659,7 @@ state 172
     (64) expression_opt -> . expression
     (65) expression_opt -> . empty
     (62) expression -> . assignment_expression
-    (63) expression -> . assignment_expression COMMA expression
+    (63) expression -> . expression COMMA assignment_expression
     (1) empty -> .
     (66) assignment_expression -> . expr
     (67) assignment_expression -> . unary_expression assignment_operator assignment_expression
@@ -5981,26 +5983,31 @@ state 179
 
 state 180
 
-    (63) expression -> assignment_expression COMMA expression .
+    (63) expression -> expression COMMA assignment_expression .
 
-    RPAREN          reduce using rule 63 (expression -> assignment_expression COMMA expression .)
-    SEMI            reduce using rule 63 (expression -> assignment_expression COMMA expression .)
-    RBRACK          reduce using rule 63 (expression -> assignment_expression COMMA expression .)
+    RPAREN          reduce using rule 63 (expression -> expression COMMA assignment_expression .)
+    COMMA           reduce using rule 63 (expression -> expression COMMA assignment_expression .)
+    SEMI            reduce using rule 63 (expression -> expression COMMA assignment_expression .)
+    RBRACK          reduce using rule 63 (expression -> expression COMMA assignment_expression .)
 
 
 state 181
 
     (108) selection_statement -> IF LPAREN expression . RPAREN statement
     (109) selection_statement -> IF LPAREN expression . RPAREN statement ELSE statement
+    (63) expression -> expression . COMMA assignment_expression
 
     RPAREN          shift and go to state 190
+    COMMA           shift and go to state 160
 
 
 state 182
 
     (110) iteration_statement -> WHILE LPAREN expression . RPAREN statement
+    (63) expression -> expression . COMMA assignment_expression
 
     RPAREN          shift and go to state 191
+    COMMA           shift and go to state 160
 
 
 state 183
@@ -6016,7 +6023,7 @@ state 184
     (64) expression_opt -> . expression
     (65) expression_opt -> . empty
     (62) expression -> . assignment_expression
-    (63) expression -> . assignment_expression COMMA expression
+    (63) expression -> . expression COMMA assignment_expression
     (1) empty -> .
     (66) assignment_expression -> . expr
     (67) assignment_expression -> . unary_expression assignment_operator assignment_expression
@@ -6197,7 +6204,7 @@ state 190
     (64) expression_opt -> . expression
     (65) expression_opt -> . empty
     (62) expression -> . assignment_expression
-    (63) expression -> . assignment_expression COMMA expression
+    (63) expression -> . expression COMMA assignment_expression
     (1) empty -> .
     (66) assignment_expression -> . expr
     (67) assignment_expression -> . unary_expression assignment_operator assignment_expression
@@ -6311,7 +6318,7 @@ state 191
     (64) expression_opt -> . expression
     (65) expression_opt -> . empty
     (62) expression -> . assignment_expression
-    (63) expression -> . assignment_expression COMMA expression
+    (63) expression -> . expression COMMA assignment_expression
     (1) empty -> .
     (66) assignment_expression -> . expr
     (67) assignment_expression -> . unary_expression assignment_operator assignment_expression
@@ -6405,7 +6412,7 @@ state 192
     (64) expression_opt -> . expression
     (65) expression_opt -> . empty
     (62) expression -> . assignment_expression
-    (63) expression -> . assignment_expression COMMA expression
+    (63) expression -> . expression COMMA assignment_expression
     (1) empty -> .
     (66) assignment_expression -> . expr
     (67) assignment_expression -> . unary_expression assignment_operator assignment_expression
@@ -6573,7 +6580,7 @@ state 199
     (64) expression_opt -> . expression
     (65) expression_opt -> . empty
     (62) expression -> . assignment_expression
-    (63) expression -> . assignment_expression COMMA expression
+    (63) expression -> . expression COMMA assignment_expression
     (1) empty -> .
     (66) assignment_expression -> . expr
     (67) assignment_expression -> . unary_expression assignment_operator assignment_expression
@@ -6729,7 +6736,7 @@ state 202
     (64) expression_opt -> . expression
     (65) expression_opt -> . empty
     (62) expression -> . assignment_expression
-    (63) expression -> . assignment_expression COMMA expression
+    (63) expression -> . expression COMMA assignment_expression
     (1) empty -> .
     (66) assignment_expression -> . expr
     (67) assignment_expression -> . unary_expression assignment_operator assignment_expression
@@ -6823,7 +6830,7 @@ state 203
     (64) expression_opt -> . expression
     (65) expression_opt -> . empty
     (62) expression -> . assignment_expression
-    (63) expression -> . assignment_expression COMMA expression
+    (63) expression -> . expression COMMA assignment_expression
     (1) empty -> .
     (66) assignment_expression -> . expr
     (67) assignment_expression -> . unary_expression assignment_operator assignment_expression
@@ -6963,7 +6970,7 @@ state 207
     (64) expression_opt -> . expression
     (65) expression_opt -> . empty
     (62) expression -> . assignment_expression
-    (63) expression -> . assignment_expression COMMA expression
+    (63) expression -> . expression COMMA assignment_expression
     (1) empty -> .
     (66) assignment_expression -> . expr
     (67) assignment_expression -> . unary_expression assignment_operator assignment_expression
@@ -7077,7 +7084,7 @@ state 208
     (64) expression_opt -> . expression
     (65) expression_opt -> . empty
     (62) expression -> . assignment_expression
-    (63) expression -> . assignment_expression COMMA expression
+    (63) expression -> . expression COMMA assignment_expression
     (1) empty -> .
     (66) assignment_expression -> . expr
     (67) assignment_expression -> . unary_expression assignment_operator assignment_expression

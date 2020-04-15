@@ -37,16 +37,19 @@ class UCParser:
         """
         p[0] = [p[1]] if len(p) == 2 else p[1] + [p[2]]
 
-    def p_global_declaration(self, p):
+    def p_global_declaration_1(self, p):
         """global_declaration : function_definition
-                              | declaration
+        """
+        p[0] = p[1]
+
+    def p_global_declaration_2(self, p):
+        """global_declaration : declaration
         """
         p[0] = ast.GlobalDecl(p[1], coord=self._token_coord(p, 1))
 
-    #  TODO
     def p_function_definition(self, p):
         """ function_definition : type_specifier declarator declaration_list_opt compound_statement """
-        p[0] = (p[1], p[2], p[3], p[4])
+        p[0] = ast.FuncDef(p[1], p[2], p[3], p[4])
 
     def p_type_specifier(self, p):
         """ type_specifier : VOID
@@ -86,10 +89,11 @@ class UCParser:
         elif len(p) == 3:
             p[0] = p[2]
 
+    #  array declarator
     def p_direct_declarator_2(self, p):
         """ direct_declarator : direct_declarator LBRACK constant_expression_opt RBRACK
         """
-        p[0] = ast.VarDecl(type=p[1], declname=p[3], coord=self._token_coord(p, 1))
+        p[0] = ast.ArrayDecl(type=p[1], decl=p[3], coord=self._token_coord(p, 1))
 
     def p_direct_declarator_3(self, p):
         """ direct_declarator : direct_declarator LPAREN parameter_list RPAREN
@@ -152,9 +156,7 @@ class UCParser:
                         | LPAREN type_specifier RPAREN cast_expression
         """
         p[0] = (
-            p[1]
-            if len(p) == 2
-            else ast.Cast(p[2], p[4], coord=self._token_coord(p, 2))
+            p[1] if len(p) == 2 else ast.Cast(p[2], p[4], coord=self._token_coord(p, 2))
         )
 
     def p_unary_expression_1(self, p):
@@ -247,6 +249,8 @@ class UCParser:
         else:
             if not isinstance(p[1], ast.ExprList):
                 p[1] = ast.ExprList([p[1]])
+            p[1].exprs.append(p[3])
+            p[0] = p[1]
 
     def p_expression_opt(self, p):
         """ expression_opt : expression
@@ -311,12 +315,12 @@ class UCParser:
     def p_parameter_declaration(self, p):
         """ parameter_declaration : type_specifier declarator
         """
-        p[0] = self._build_declarations(spec=p[1], decls=p[2])
+        p[0] = self._build_declarations(spec=[p[1]], decls=p[2])
 
     def p_declaration(self, p):
         """declaration : type_specifier init_declarator_list SEMI
         """
-        p[0] = self._build_declarations(spec=p[1], decls=p[2])
+        p[0] = self._build_declarations(spec=[p[1]], decls=p[2])
 
     def p_declaration_list(self, p):
         """ declaration_list : declaration
@@ -522,7 +526,7 @@ class UCParser:
         else:
             # At this point, we know that typename is a list of Type
             # nodes. Concatenate all the names into a single list.
-            type.type = ast.Type([typename.names[0]], coord=typename.coord)
+            type.type = ast.Type([typename[0].names], coord=typename[0].coord)
         return decl
 
     def _type_modify_decl(self, decl, modifier):

@@ -10,11 +10,12 @@
 
 import sys
 from contextlib import contextmanager
-from parser import UCParser
+from ucparser import UCParser
 
 """
 One of the most important (and difficult) parts of writing a compiler
-is reliable reporting of error messages back to the user.  This file
+is reliable reporting of error messages back to the user.  This filec
+
 defines some generic functionality for dealing with errors throughout
 the compiler project. Error handling is based on a subscription/logging
 based approach.

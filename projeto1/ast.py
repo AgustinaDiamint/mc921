@@ -530,6 +530,7 @@ class InitList(Node):
 
 
 class ParamList(Node):
+    
     __slots__ = ("parameter_declaration", "coord")
 
     def __init__(self, parameter_declaration, coord=None):

@@ -24,7 +24,7 @@ class Node(object):
         result = self.__class__.__name__ + "("
         indent = ""
         separator = ""
-        for name in self.__slots__[:-2]:
+        for name in self.__slots__[:-1]:
             result += separator
             result += indent
             result += (
@@ -307,8 +307,6 @@ class Decl(Node):
         nodelist = []
         if self.type is not None:
             nodelist.append(("type", self.type))
-        if self.name is not None:
-            nodelist.append(("name", self.name))
         if self.init is not None:
             nodelist.append(("init", self.init))
         return tuple(nodelist)
@@ -317,19 +315,16 @@ class Decl(Node):
 
 
 class DeclList(Node):
-    __slots__ = ("type", "name_list", "coord")
+    __slots__ = ("decls", "coord")
 
-    def __init__(self, type, name_list, coord=None):
-        self.type = type
-        self.name_list = name_list
+    def __init__(self, decls, coord=None):
+        self.decls = decls
         self.coord = coord
 
     def children(self):
         nodelist = []
-        if self.type is not None:
-            nodelist.append(("type", self.type))
-        for idx, name in enumerate(self.name_list):
-            nodelist.append(("names[%d]" % idx, name))
+        for idx, decl in enumerate(self.decls):
+            nodelist.append(("decls[%d]" % idx, decl))
         return tuple(nodelist)
 
     atrr_names = ()
@@ -484,8 +479,6 @@ class ID(Node):
 
     def children(self):
         nodelist = []
-        if self.name is not None:
-            nodelist.append(("name", self.name))
         return tuple(nodelist)
 
     attr_names = ("name",)
@@ -669,8 +662,6 @@ class VarDecl(Node):
         nodelist = []
         if self.type is not None:
             nodelist.append(("type", self.type))
-        if self.declname is not None:
-            nodelist.append(("declname", self.declname))
         return tuple(nodelist)
 
     attr_names = ()

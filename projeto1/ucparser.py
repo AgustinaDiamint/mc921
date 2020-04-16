@@ -57,7 +57,7 @@ class UCParser:
                            | INT
                            | FLOAT
         """
-        p[0] = ast.Type([p[1]], coord=self._token_coord(p, 1))
+        p[0] = ast.Type(p[1], coord=self._token_coord(p, 1))
 
     def p_declarator(self, p):
         """ declarator : pointer direct_declarator
@@ -86,7 +86,7 @@ class UCParser:
         """
         if len(p) == 2:
             p[0] = ast.VarDecl(None, p[1], coord=self._token_coord(p, 1))
-        elif len(p) == 3:
+        elif len(p) == 4:
             p[0] = p[2]
 
     #  array declarator
@@ -407,7 +407,7 @@ class UCParser:
         elif len(p) == 10:
             p[0] = ast.For(p[3], p[5], p[7], p[9], coord=self._token_coord(p, 1))
         else:
-            p[0] = ast.For(p[3], p[4], p[6], p[8], coord=self._token_coord(p, 1))
+            p[0] = ast.For(ast.DeclList(p[3]), p[4], p[6], p[8], coord=self._token_coord(p, 1))
 
     def p_jump_statement_1(self, p):
         """

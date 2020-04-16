@@ -1,0 +1,7 @@
+Program: 
+    GlobalDecl: 
+        Decl: 
+            ArrayDecl: 
+                VarDecl: 
+                    Type: [['int']]   @ 1:1
+                    ID: v   @ 1:5

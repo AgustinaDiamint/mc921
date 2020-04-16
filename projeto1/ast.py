@@ -138,9 +138,9 @@ class ArrayDecl(Node):
     def children(self):
         nodelist = []
         if self.decl is not None:
-            nodelist.append("decl", self.decl)
+            nodelist.append(("decl", self.decl))
         if self.type is not None:
-            nodelist.append("type", self.type)
+            nodelist.append(("type", self.type))
         return tuple(nodelist)
 
     attr_names = ()
@@ -468,8 +468,8 @@ class GlobalDecl(Node):
 
     def children(self):
         nodelist = []
-        if self.glbldec is not None:
-            nodelist.append(("glbldec", self.glbldec))
+        for i, init in enumerate(self.glbldec or []):
+            nodelist.append(("glbldec[%d]" % i, init))
         return tuple(nodelist)
 
     attr_names = ()
@@ -530,7 +530,7 @@ class InitList(Node):
 
 
 class ParamList(Node):
-    
+
     __slots__ = ("parameter_declaration", "coord")
 
     def __init__(self, parameter_declaration, coord=None):
@@ -669,7 +669,7 @@ class VarDecl(Node):
         nodelist = []
         if self.type is not None:
             nodelist.append(("type", self.type))
-        if self.name is not None:
+        if self.declname is not None:
             nodelist.append(("declname", self.declname))
         return tuple(nodelist)
 

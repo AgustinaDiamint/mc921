@@ -99,7 +99,7 @@ class UCParser:
         """ direct_declarator : direct_declarator LPAREN parameter_list RPAREN
                               | direct_declarator LPAREN identifier_list_opt RPAREN
         """
-        p[0] = ast.FuncDecl(p[3], None, coord=self._token_coord(p, 1))
+        p[0] = ast.FuncDecl(p[3], p[1], coord=self._token_coord(p, 1))
 
     def p_constant_expression(self, p):
         """ constant_expression : expr """
@@ -315,7 +315,7 @@ class UCParser:
     def p_parameter_declaration(self, p):
         """ parameter_declaration : type_specifier declarator
         """
-        p[0] = self._build_declarations(spec=[p[1]], decls=p[2])
+        p[0] = (p[1], p[2])
 
     def p_declaration(self, p):
         """declaration : type_specifier init_declarator_list SEMI

@@ -49,7 +49,7 @@ class UCParser:
 
     def p_function_definition(self, p):
         """ function_definition : type_specifier declarator declaration_list_opt compound_statement """
-        p[0] = ast.FuncDef(p[1], p[2], p[3], p[4])
+        p[0] = ast.FuncDef(p[1], p[2], p[3], p[4], coord=p[1].coord)
 
     def p_type_specifier(self, p):
         """ type_specifier : VOID
@@ -97,9 +97,12 @@ class UCParser:
 
     def p_direct_declarator_3(self, p):
         """ direct_declarator : direct_declarator LPAREN parameter_list RPAREN
-                              | direct_declarator LPAREN identifier_list_opt RPAREN
         """
-        p[0] = ast.FuncDecl(p[3], p[1], coord=self._token_coord(p, 1))
+        p[0] = ast.FuncDecl(p[3], None, coord=self._token_coord(p, 1))
+
+    def p_direct_declarator_4(self, p):
+        """ direct_declarator : direct_declarator LPAREN identifier_list_opt RPAREN """
+        p[0] = ast.FuncCall(p[1], p[3], coord=self._token_coord(p, 1))
 
     def p_constant_expression(self, p):
         """ constant_expression : expr """
@@ -147,7 +150,7 @@ class UCParser:
         p[0] = (
             (p[1])
             if len(p) == 2
-            else ast.BinaryOp(p[2], p[1], p[3], coord=self._token_coord(p, 2))
+            else ast.BinaryOp(p[2], p[1], p[3], coord=p[1].coord)
         )
 
     def p_cast_expression(self, p):
@@ -156,7 +159,7 @@ class UCParser:
                         | LPAREN type_specifier RPAREN cast_expression
         """
         p[0] = (
-            p[1] if len(p) == 2 else ast.Cast(p[2], p[4], coord=self._token_coord(p, 2))
+            p[1] if len(p) == 2 else ast.Cast(p[2], p[4], coord=self._token_coord(p, 1))
         )
 
     def p_unary_expression_1(self, p):
@@ -170,14 +173,14 @@ class UCParser:
             p[0] = ast.UnaryOp(p[1], p[2], coord=self._token_coord(p, 1))
 
     def p_unary_expression_2(self, p):
-        """unary_expression : PP unary_expression  """
-        p[0] = ast.UnaryOp(p[1], p[2], coord=self._token_coord(p, 2))
+        """unary_expression : PP unary_expression"""
+        p[0] = ast.UnaryOp(p[1], p[2], coord=p[2].coord)
 
     def p_unary_expression_3(self, p):
         """
         unary_expression : MM unary_expression
         """
-        p[0] = ast.UnaryOp(p[1], p[2], coord=self._token_coord(p, 2))
+        p[0] = ast.UnaryOp(p[1], p[2], coord=p[2].coord)
 
     def p_postfix_expression_1(self, p):
         """
@@ -198,13 +201,13 @@ class UCParser:
         postfix_expression : postfix_expression MM
                            | postfix_expression PP
         """
-        p[0] = ast.UnaryOp("p" + p[2], p[1], coord=self._token_coord(p, 1))
+        p[0] = ast.UnaryOp("p" + p[2], p[1], coord=p[1].coord)
 
     def p_postfix_expression_3(self, p):
         """
         postfix_expression : postfix_expression LBRACK expression RBRACK
         """
-        p[0] = ast.ArrayRef(p[1], p[3], coord=self._token_coord(p, 1))
+        p[0] = ast.ArrayRef(p[1], p[3], coord=p[1].coord)
 
     def p_primary_expression_1(self, p):
         """
@@ -249,7 +252,7 @@ class UCParser:
         else:
             if not isinstance(p[1], ast.ExprList):
                 p[1] = ast.ExprList([p[1]])
-            p[1].exprs.append(p[3])
+            p[1].expr.append(p[3])
             p[0] = p[1]
 
     def p_expression_opt(self, p):
@@ -306,16 +309,15 @@ class UCParser:
         """parameter_list : parameter_declaration
                           | parameter_list COMMA parameter_declaration
         """
-        p[0] = (
-            [p[1]]
-            if len(p) == 2
-            else ast.ParamList(p[1].append(p[3]), coord=self._token_coord(p, 3))
-        )
+        if len(p) == 2:
+            p[0] = ast.ParamList([p[1]], coord=self._token_coord(p, 1))
+        else:
+            p[0] = ast.ParamList(p[1].parameter.append(p[3]), coord=self._token_coord(p, 1))
 
     def p_parameter_declaration(self, p):
         """ parameter_declaration : type_specifier declarator
         """
-        p[0] = (p[1], p[2])
+        p[0] = ast.VarDecl(type=p[1], declname=p[2], coord=p[1].coord)
 
     def p_declaration(self, p):
         """declaration : type_specifier init_declarator_list SEMI
@@ -326,7 +328,10 @@ class UCParser:
         """ declaration_list : declaration
                              | declaration_list declaration
         """
-        p[0] = [p[1]] if len(p) == 2 else p[1].append(p[2])
+        if len(p) == 2:
+            p[0] = ast.DeclList(p[1], coord=self._token_coord(p, 1))
+        else:
+            p[0] = ast.DeclList(p[1].decls.append(p[2]), coord=self._token_coord(p, 1))
 
     def p_declaration_list_opt(self, p):
         """ declaration_list_opt : declaration_list
@@ -358,10 +363,10 @@ class UCParser:
                              | initializer_list COMMA initializer
         """
         if len(p) == 2:
-            p[0] = ast.InitList([p[1]], coord=self._token_coord(p, 1))
+            p[0] = ast.InitList([p[1]], coord=p[1].coord)
         else:
             p[1].initializer.append(p[3])
-            p[0] = ast.InitList(p[1].initializer, coord=self._token_coord(p, 1))
+            p[0] = ast.InitList(p[1].initializer, coord=p[1].coord)
 
     def p_compound_statement(self, p):
         """compound_statement : LBRACE declaration_list_opt statement_list_opt RBRACE
@@ -407,7 +412,9 @@ class UCParser:
         elif len(p) == 10:
             p[0] = ast.For(p[3], p[5], p[7], p[9], coord=self._token_coord(p, 1))
         else:
-            p[0] = ast.For(ast.DeclList(p[3]), p[4], p[6], p[8], coord=self._token_coord(p, 1))
+            p[0] = ast.For(
+                ast.DeclList(p[3], coord=self._token_coord(p, 1)), p[4], p[6], p[8], coord=self._token_coord(p, 1)
+            )
 
     def p_jump_statement_1(self, p):
         """
@@ -426,16 +433,16 @@ class UCParser:
 
     def p_assert_statement(self, p):
         """ assert_statement : ASSERT expr SEMI """
-        p[0] = ast.Assert(p[2], coord=self._token_coord(p, 2))
+        p[0] = ast.Assert(p[2], coord=p[2].coord)
 
     def p_print_statement(self, p):
         """ print_statement : PRINT LPAREN expression_opt RPAREN SEMI
         """
-        p[0] = ast.Print(p[3], coord=self._token_coord(p, 3))
+        p[0] = ast.Print(p[3], coord=p[3].coord)
 
     def p_read_statement(self, p):
         """read_statement : READ LPAREN argument_expression RPAREN SEMI"""
-        p[0] = ast.Read(p[3], coord=self._token_coord(p, 2))
+        p[0] = ast.Read(p[3], coord=p[3].coord)
 
     def p_statement_list(self, p):
         """ statement_list : statement_list statement

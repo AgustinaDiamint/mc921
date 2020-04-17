@@ -267,8 +267,8 @@ class Compound(Node):
 
     def children(self):
         nodelist = []
-        for idx, dec in enumerate(self.declaration_list or []):
-            nodelist.append(("declaration_list[%d]" % idx, dec))
+        if self.declaration_list is not None:
+            nodelist.append(("declaration_list", self.declaration_list))
         for idx, state in enumerate(self.statement_list or []):
             nodelist.append(("statement_list[%d]" % idx, state))
         return tuple(nodelist)
@@ -431,11 +431,10 @@ class FuncDef(Node):
     )
 
     def __init__(
-        self, type, declarator, declaration_list, compound_statement, coord=None
+        self, type, declarator, compound_statement, coord=None
     ):
         self.type = type
         self.declarator = declarator
-        self.declaration_list = declaration_list
         self.compound_statement = compound_statement
         self.coord = coord
 
@@ -445,8 +444,6 @@ class FuncDef(Node):
             nodelist.append(("type", self.type))
         if self.declarator is not None:
             nodelist.append(("declarator", self.declarator))
-        for i, dec in enumerate(self.declaration_list or []):
-            nodelist.append(("declaration_list[%d]" % i, dec))
         if self.compound_statement is not None:
             nodelist.append(("compound_statement", self.compound_statement))
         return tuple(nodelist)
@@ -524,16 +521,16 @@ class InitList(Node):
 
 class ParamList(Node):
 
-    __slots__ = ("parameter_declaration", "coord")
+    __slots__ = ("parameter", "coord")
 
-    def __init__(self, parameter_declaration, coord=None):
-        self.parameter_declaration = parameter_declaration
+    def __init__(self, parameter, coord=None):
+        self.parameter = parameter
         self.coord = coord
 
     def children(self):
         nodelist = []
-        for i, dec in enumerate(self.parameter_declaration or []):
-            nodelist.append(("parameter_declaration[%d]" % i, dec))
+        for i, dec in enumerate(self.parameter or []):
+            nodelist.append(("parameter[%d]" % i, dec))
         return tuple(nodelist)
 
     attr_names = ()

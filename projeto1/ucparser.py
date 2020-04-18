@@ -49,7 +49,9 @@ class UCParser:
 
     def p_function_definition(self, p):
         """ function_definition : type_specifier declarator declaration_list_opt compound_statement """
-        p[0] = ast.FuncDef(p[1], p[2], p[3], p[4])
+        declarations = self._build_declarations(spec=[p[1]], decls=[{"decl": p[2]}])
+
+        p[0] = ast.FuncDef(p[1], declarations[0], p[3], p[4])
 
     def p_type_specifier(self, p):
         """ type_specifier : VOID
@@ -88,7 +90,7 @@ class UCParser:
         if len(p) == 2:
             p[0] = ast.VarDecl(None, p[1], coord=self._token_coord(p, 1))
         elif len(p) == 4:
-            p[0] = self._build_declarations(spec=None, decl=p[2])
+            p[0] = p[2]
 
     #  array declarator
     def p_direct_declarator_2(self, p):
@@ -100,13 +102,8 @@ class UCParser:
 
     def p_direct_declarator_3(self, p):
         """ direct_declarator : direct_declarator LPAREN parameter_list RPAREN
+                              | direct_declarator LPAREN identifier_list_opt RPAREN
         """
-        p[0] = self._type_modify_decl(
-            p[1], ast.FuncDecl(p[3], None, coord=self._token_coord(p, 1))
-        )
-
-    def p_direct_declarator_4(self, p):
-        """ direct_declarator : direct_declarator LPAREN identifier_list_opt RPAREN """
         p[0] = self._type_modify_decl(
             p[1], ast.FuncDecl(p[3], None, coord=self._token_coord(p, 1))
         )
@@ -315,7 +312,7 @@ class UCParser:
                           | parameter_list COMMA parameter_declaration
         """
         if len(p) == 2:
-            p[0] = ast.ParamList([p[1]], coord=self._token_coord(p, 1))
+            p[0] = ast.ParamList(p[1], coord=self._token_coord(p, 1))
         else:
             p[0] = ast.ParamList(
                 p[1].parameter.append(p[3]), coord=self._token_coord(p, 1)
@@ -324,7 +321,7 @@ class UCParser:
     def p_parameter_declaration(self, p):
         """ parameter_declaration : type_specifier declarator
         """
-        p[0] = ast.VarDecl(type=p[1], declname=p[2], coord=p[1].coord)
+        p[0] = self._build_declarations(spec=[p[1]], decls=[{"decl": p[2]}])
 
     def p_declaration(self, p):
         """declaration : type_specifier init_declarator_list SEMI

@@ -11,8 +11,10 @@ Program:
                 Constant: int, 4   @ 1:21
     FuncDef: 
         Type: int   @ 2:1
-        FuncDecl: 
-            VarDecl: 
+        Decl: 
+            FuncDecl: 
+                VarDecl: 
+                    Type: ['int']   @ 2:1
         Compound:    @ 2:11
             For:    @ 3:5
                 DeclList:    @ 3:5

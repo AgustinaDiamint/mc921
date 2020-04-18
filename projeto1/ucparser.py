@@ -63,11 +63,12 @@ class UCParser:
         """ declarator : pointer direct_declarator
                         | direct_declarator
         """
-        p[0] = (
-            p[1]
-            if len(p) == 2
-            else ast.PtrDecl(p[1], p[2], coord=self._token_coord(p, 1))
-        )
+        if len(p) == 3:
+            p[0] = self._type_modify_decl(
+                p[2], ast.PtrDecl(p[1], p[2], coord=self._token_coord(p, 1))
+            )
+        else:
+            p[0] = p[1]
 
     def p_pointer(self, p):
         """ pointer : TIMES pointer_opt
@@ -93,12 +94,16 @@ class UCParser:
     def p_direct_declarator_2(self, p):
         """ direct_declarator : direct_declarator LBRACK constant_expression_opt RBRACK
         """
-        p[0] = ast.ArrayDecl(type=p[1], decl=p[3], coord=self._token_coord(p, 1))
+        p[0] = self._type_modify_decl(
+            p[1], ast.ArrayDecl(type=p[1], decl=p[3], coord=self._token_coord(p, 1))
+        )
 
     def p_direct_declarator_3(self, p):
         """ direct_declarator : direct_declarator LPAREN parameter_list RPAREN
         """
-        p[0] = ast.FuncDecl(p[3], None, coord=self._token_coord(p, 1))
+        p[0] = self._type_modify_decl(
+            p[1], ast.FuncDecl(p[3], None, coord=self._token_coord(p, 1))
+        )
 
     def p_direct_declarator_4(self, p):
         """ direct_declarator : direct_declarator LPAREN identifier_list_opt RPAREN """

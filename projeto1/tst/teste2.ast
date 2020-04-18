@@ -1,15 +1,15 @@
 Program: 
     GlobalDecl: 
-        Decl: 
+        Decl: ID(name='n'  )
             VarDecl: 
                 Type: ['int']   @ 1:1
             Constant: int, 3   @ 1:9
     FuncDef: 
         Type: ['int']   @ 3:1
-        Decl: 
+        Decl: ID(name='doubleMe'  )
             FuncDecl: 
                 ParamList: 
-                    Decl: 
+                    Decl: ID(name='x'  )
                         VarDecl: 
                             Type: ['int']   @ 3:15
                 VarDecl: 
@@ -21,12 +21,12 @@ Program:
                     ID: x   @ 4:16
     FuncDef: 
         Type: ['void']   @ 7:1
-        Decl: 
+        Decl: ID(name='main'  )
             FuncDecl: 
                 VarDecl: 
                     Type: ['void']   @ 7:1
         Compound:    @ 7:1
-            Decl: 
+            Decl: ID(name='v'  )
                 VarDecl: 
                     Type: ['int']   @ 8:5
                 ID: n   @ 8:13

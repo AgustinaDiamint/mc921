@@ -295,23 +295,20 @@ class Constant(Node):
 
 
 class Decl(Node):
-    __slots__ = ("type", "name", "init", "coord")
-
-    def __init__(self, type, name, init, coord=None):
-        self.type = type
+    __slots__ = ('name', 'type', 'init', 'coord')
+    def __init__(self, name, type, init, coord=None):
         self.name = name
+        self.type = type
         self.init = init
         self.coord = coord
 
     def children(self):
         nodelist = []
-        if self.type is not None:
-            nodelist.append(("type", self.type))
-        if self.init is not None:
-            nodelist.append(("init", self.init))
+        if self.type is not None: nodelist.append(("type", self.type))
+        if self.init is not None: nodelist.append(("init", self.init))
         return tuple(nodelist)
 
-    atrr_names = ("name",)
+    attr_names = ('name', )
 
 
 class DeclList(Node):

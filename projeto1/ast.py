@@ -430,9 +430,10 @@ class FuncDef(Node):
         "coord",
     )
 
-    def __init__(self, type, declarator, compound_statement, coord=None):
+    def __init__(self, type, declarator, declaration_list, compound_statement, coord=None):
         self.type = type
         self.declarator = declarator
+        self.declaration_list = declaration_list
         self.compound_statement = compound_statement
         self.coord = coord
 
@@ -442,6 +443,8 @@ class FuncDef(Node):
             nodelist.append(("type", self.type))
         if self.declarator is not None:
             nodelist.append(("declarator", self.declarator))
+        for idx, child in enumerate(self.declaration_list or []):
+            nodelist.append(("declaration_list[%d]" % idx, child))
         if self.compound_statement is not None:
             nodelist.append(("compound_statement", self.compound_statement))
         return tuple(nodelist)

@@ -430,9 +430,7 @@ class FuncDef(Node):
         "coord",
     )
 
-    def __init__(
-        self, type, declarator, compound_statement, coord=None
-    ):
+    def __init__(self, type, declarator, compound_statement, coord=None):
         self.type = type
         self.declarator = declarator
         self.compound_statement = compound_statement

@@ -49,7 +49,7 @@ class UCParser:
 
     def p_function_definition(self, p):
         """ function_definition : type_specifier declarator declaration_list_opt compound_statement """
-        p[0] = ast.FuncDef(p[1], p[2], p[3], p[4], coord=p[1].coord)
+        p[0] = ast.FuncDef(p[1], p[2], p[3], p[4])
 
     def p_type_specifier(self, p):
         """ type_specifier : VOID
@@ -148,9 +148,7 @@ class UCParser:
                 | expr OR expr
         """
         p[0] = (
-            (p[1])
-            if len(p) == 2
-            else ast.BinaryOp(p[2], p[1], p[3], coord=p[1].coord)
+            (p[1]) if len(p) == 2 else ast.BinaryOp(p[2], p[1], p[3], coord=p[1].coord)
         )
 
     def p_cast_expression(self, p):
@@ -312,7 +310,9 @@ class UCParser:
         if len(p) == 2:
             p[0] = ast.ParamList([p[1]], coord=self._token_coord(p, 1))
         else:
-            p[0] = ast.ParamList(p[1].parameter.append(p[3]), coord=self._token_coord(p, 1))
+            p[0] = ast.ParamList(
+                p[1].parameter.append(p[3]), coord=self._token_coord(p, 1)
+            )
 
     def p_parameter_declaration(self, p):
         """ parameter_declaration : type_specifier declarator
@@ -413,7 +413,11 @@ class UCParser:
             p[0] = ast.For(p[3], p[5], p[7], p[9], coord=self._token_coord(p, 1))
         else:
             p[0] = ast.For(
-                ast.DeclList(p[3], coord=self._token_coord(p, 1)), p[4], p[6], p[8], coord=self._token_coord(p, 1)
+                ast.DeclList(p[3], coord=self._token_coord(p, 1)),
+                p[4],
+                p[6],
+                p[8],
+                coord=self._token_coord(p, 1),
             )
 
     def p_jump_statement_1(self, p):

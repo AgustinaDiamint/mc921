@@ -536,11 +536,11 @@ class UCParser:
             # Functions default to returning int
             if not isinstance(decl.type, ast.FuncDecl):
                 self._parse_error("Missing type in declaration", decl.coord)
-            type.type = ast.Type(["int"], coord=decl.coord)
+            type.type = ast.Type("int", coord=decl.coord)
         else:
             # At this point, we know that typename is a list of Type
             # nodes. Concatenate all the names into a single list.
-            type.type = ast.Type([typename[0].names], coord=typename[0].coord)
+            type.type = ast.Type(typename[0].names, coord=typename[0].coord)
         return decl
 
     def _type_modify_decl(self, decl, modifier):

@@ -50,7 +50,7 @@ class UCParser:
     def p_function_definition(self, p):
         """ function_definition : type_specifier declarator declaration_list_opt compound_statement """
         declarations = self._build_declarations(spec=[p[1]], decls=[{"decl": p[2]}])
-
+        p[4].coord = p[1].coord
         p[0] = ast.FuncDef(p[1], declarations[0], p[3], p[4])
 
     def p_type_specifier(self, p):
@@ -374,7 +374,7 @@ class UCParser:
     def p_compound_statement(self, p):
         """compound_statement : LBRACE declaration_list_opt statement_list_opt RBRACE
         """
-        p[0] = ast.Compound(p[2], p[3], coord=self._token_coord(p, 1))
+        p[0] = ast.Compound(p[2], p[3], coord=self._token_coord(p, 0))
 
     def p_statement(self, p):
         """

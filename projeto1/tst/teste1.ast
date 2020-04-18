@@ -15,7 +15,7 @@ Program:
             FuncDecl: 
                 VarDecl: 
                     Type: ['int']   @ 2:1
-        Compound:    @ 2:11
+        Compound:    @ 2:1
             For:    @ 3:5
                 DeclList:    @ 3:5
                     Decl: 

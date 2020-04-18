@@ -59,7 +59,7 @@ class UCParser:
                            | INT
                            | FLOAT
         """
-        p[0] = ast.Type(p[1], coord=self._token_coord(p, 1))
+        p[0] = ast.Type([p[1]], coord=self._token_coord(p, 1))
 
     def p_declarator(self, p):
         """ declarator : pointer direct_declarator

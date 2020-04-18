@@ -11,7 +11,7 @@ Program:
                 Constant: int, 4   @ 1:21
     FuncDef: 
         Type: int   @ 2:1
-        FuncCall: 
+        FuncDecl: 
             VarDecl: 
         Compound:    @ 2:11
             For:    @ 3:5
@@ -25,7 +25,7 @@ Program:
                     Constant: int, 4   @ 3:26
                 UnaryOp: p++   @ 3:29
                     ID: i   @ 3:29
-                Print:    @ 4:15
+                Print:    @ 4:9
                     ArrayRef:    @ 4:15
                         ID: v   @ 4:15
                         ID: i   @ 4:17

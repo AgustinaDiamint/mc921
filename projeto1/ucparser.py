@@ -88,7 +88,7 @@ class UCParser:
         if len(p) == 2:
             p[0] = ast.VarDecl(None, p[1], coord=self._token_coord(p, 1))
         elif len(p) == 4:
-            p[0] = p[2]
+            p[0] = self._build_declarations(spec=None, decl=p[2])
 
     #  array declarator
     def p_direct_declarator_2(self, p):
@@ -107,7 +107,9 @@ class UCParser:
 
     def p_direct_declarator_4(self, p):
         """ direct_declarator : direct_declarator LPAREN identifier_list_opt RPAREN """
-        p[0] = ast.FuncCall(p[1], p[3], coord=self._token_coord(p, 1))
+        p[0] = self._type_modify_decl(
+            p[1], ast.FuncDecl(p[3], None, coord=self._token_coord(p, 1))
+        )
 
     def p_constant_expression(self, p):
         """ constant_expression : expr """
@@ -447,7 +449,7 @@ class UCParser:
     def p_print_statement(self, p):
         """ print_statement : PRINT LPAREN expression_opt RPAREN SEMI
         """
-        p[0] = ast.Print(p[3], coord=p[3].coord)
+        p[0] = ast.Print(p[3], coord=self._token_coord(p, 1))
 
     def p_read_statement(self, p):
         """read_statement : READ LPAREN argument_expression RPAREN SEMI"""

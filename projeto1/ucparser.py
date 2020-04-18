@@ -194,9 +194,9 @@ class UCParser:
         if len(p) == 2:
             p[0] = p[1]
         elif len(p) == 4:
-            p[0] = ast.FuncCall(p[1], None, coord=self._token_coord(p, 1))
+            p[0] = ast.FuncCall(p[1], None, coord=p[1].coord)
         elif len(p) == 5:
-            p[0] = ast.FuncCall(p[1], p[3], coord=self._token_coord(p, 1))
+            p[0] = ast.FuncCall(p[1], p[3], coord=p[1].coord)
 
     def p_postfix_expression_2(self, p):
         """
@@ -253,7 +253,7 @@ class UCParser:
             p[0] = p[1]
         else:
             if not isinstance(p[1], ast.ExprList):
-                p[1] = ast.ExprList([p[1]])
+                p[1] = ast.ExprList([p[1]], coord=p[1].coord)
             p[1].expr.append(p[3])
             p[0] = p[1]
 
@@ -270,7 +270,7 @@ class UCParser:
         p[0] = (
             p[1]
             if len(p) == 2
-            else ast.Assignment(p[2], p[1], p[3], coord=self._token_coord(p, 2))
+            else ast.Assignment(p[2], p[1], p[3], coord=p[1].coord)
         )
 
     def p_argument_expression(self, p):
@@ -278,15 +278,15 @@ class UCParser:
                                | argument_expression COMMA assignment_expression
         """
         if len(p) == 2:
-            p[0] = ast.ExprList([p[1]], coord=self._token_coord(p, 1))
+            p[0] = p[1]
         else:
             if isinstance(p[1], ast.ExprList):
                 p[1].expr.append(p[3])
-                p[0] = ast.ExprList(p[1].expr, coord=self._token_coord(p, 1))
+                p[0] = ast.ExprList(p[1].expr, coord=p[1].coord)
             else:
-                p[1] = ast.ExprList([p[1]], coord=self._token_coord(p, 1))
+                p[1] = ast.ExprList([p[1]], coord=p[1].coord)
                 p[1].expr.append(p[3])
-                p[0] = ast.ExprList(p[1].expr, coord=self._token_coord(p, 1))
+                p[0] = ast.ExprList(p[1].expr, coord=p[1].coord)
 
     def p_assignment_operator(self, p):
         """ assignment_operator : ASSIGN
@@ -314,9 +314,8 @@ class UCParser:
         if len(p) == 2:
             p[0] = ast.ParamList(p[1], coord=self._token_coord(p, 1))
         else:
-            p[0] = ast.ParamList(
-                p[1].parameter.append(p[3]), coord=self._token_coord(p, 1)
-            )
+            p[1].parameter.extend(p[3])
+            p[0] = p[1]
 
     def p_parameter_declaration(self, p):
         """ parameter_declaration : type_specifier declarator
@@ -333,9 +332,9 @@ class UCParser:
                              | declaration_list declaration
         """
         if len(p) == 2:
-            p[0] = ast.DeclList(p[1], coord=self._token_coord(p, 1))
+            p[0] = p[1]
         else:
-            p[0] = ast.DeclList(p[1].decls.append(p[2]), coord=self._token_coord(p, 1))
+            p[0] = p[1] + p[2]
 
     def p_declaration_list_opt(self, p):
         """ declaration_list_opt : declaration_list
@@ -428,7 +427,7 @@ class UCParser:
         """
         jump_statement : BREAK SEMI
         """
-        p[0] = ast.Break(coord=self._token_coord(p, 2))
+        p[0] = ast.Break(coord=self._token_coord(p, 1))
 
     def p_jump_statement_2(self, p):
         """
@@ -441,7 +440,7 @@ class UCParser:
 
     def p_assert_statement(self, p):
         """ assert_statement : ASSERT expr SEMI """
-        p[0] = ast.Assert(p[2], coord=p[2].coord)
+        p[0] = ast.Assert(p[2], coord=self._token_coord(p, 1))
 
     def p_print_statement(self, p):
         """ print_statement : PRINT LPAREN expression_opt RPAREN SEMI
@@ -450,7 +449,7 @@ class UCParser:
 
     def p_read_statement(self, p):
         """read_statement : READ LPAREN argument_expression RPAREN SEMI"""
-        p[0] = ast.Read(p[3], coord=p[3].coord)
+        p[0] = ast.Read(p[3], coord=self._token_coord(p, 1))
 
     def p_statement_list(self, p):
         """ statement_list : statement_list statement

@@ -267,8 +267,8 @@ class Compound(Node):
 
     def children(self):
         nodelist = []
-        if self.declaration_list is not None:
-            nodelist.append(("declaration_list", self.declaration_list))
+        for idx, decl in enumerate(self.declaration_list or []):
+            nodelist.append(("declaration_list[%d]" % idx, decl))
         for idx, state in enumerate(self.statement_list or []):
             nodelist.append(("statement_list[%d]" % idx, state))
         return tuple(nodelist)

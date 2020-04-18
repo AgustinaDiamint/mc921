@@ -26,18 +26,16 @@ Program:
                 VarDecl: 
                     Type: ['void']   @ 7:1
         Compound:    @ 7:14
-            DeclList: 
-                Decl: 
-                    VarDecl: 
-                        Type: ['int']   @ 8:5
-                    ID: n   @ 8:13
-            Assignment: =
+            Decl: 
+                VarDecl: 
+                    Type: ['int']   @ 8:5
+                ID: n   @ 8:13
+            Assignment: =   @ 9:5
                 ID: v   @ 9:5
-                FuncCall: 
+                FuncCall:    @ 9:9
                     ID: doubleMe   @ 9:9
-                    ExprList: 
-                        ID: v   @ 9:19
-            Assert:    @ 10:12
+                    ID: v   @ 9:19
+            Assert:    @ 10:5
                 BinaryOp: ==   @ 10:12
                     ID: v   @ 10:12
                     BinaryOp: *   @ 10:17

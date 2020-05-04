@@ -374,7 +374,7 @@ class UCParser:
     def p_compound_statement(self, p):
         """compound_statement : LBRACE declaration_list_opt statement_list_opt RBRACE
         """
-        p[0] = ast.Compound(p[2], p[3], coord=self._token_coord(p, 0))
+        p[0] = ast.Compound(p[2], p[3], coord=ast.Coord(p.lineno(1), 1))
 
     def p_statement(self, p):
         """

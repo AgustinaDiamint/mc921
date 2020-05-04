@@ -1,19 +1,19 @@
 Program: 
     FuncDef: 
-        Type: int   @ 1:1
-        Decl: 
+        Type: ['int']   @ 1:1
+        Decl: ID(name='main'  )
             FuncDecl: 
                 VarDecl: 
                     Type: ['int']   @ 1:1
-        Compound:    @ 1:12
-            Decl: 
+        Compound:    @ 1:1
+            Decl: ID(name='n'  )
                 VarDecl: 
                     Type: ['int']   @ 2:5
-            Decl: 
+            Decl: ID(name='reverse'  )
                 VarDecl: 
                     Type: ['int']   @ 2:5
                 Constant: int, 0   @ 2:22
-            Decl: 
+            Decl: ID(name='rem'  )
                 VarDecl: 
                     Type: ['int']   @ 2:5
             Print:    @ 3:5
@@ -24,7 +24,7 @@ Program:
                 BinaryOp: !=   @ 5:12
                     ID: n   @ 5:12
                     Constant: int, 0   @ 5:17
-                Compound:    @ 5:20
+                Compound:    @ 5:1
                     Assignment: =   @ 6:9
                         ID: rem   @ 6:9
                         BinaryOp: %   @ 6:15

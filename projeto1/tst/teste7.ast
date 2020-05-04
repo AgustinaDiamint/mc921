@@ -1,7 +1,0 @@
-Program: 
-    GlobalDecl: 
-        Decl:
-            VarDecl: 
-                Type: [['int']]   @ 1:1
-                
- ID: x   @ 1:5

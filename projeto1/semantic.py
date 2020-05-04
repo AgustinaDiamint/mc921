@@ -42,3 +42,17 @@ CharType = uCType(
 ArrayType = uCType(
     "array", unary_ops={"*", "&"}, rel_ops={"==", "!="}, assign_ops={"="},
 )
+
+
+class SymbolTable():
+    def __init__(self):
+        self.table = {}
+
+    def add(self, value, type):
+        self.table[value] = type
+
+    def lookup(self, node):
+        if node.value in self.table:
+            return self.table[node.value]
+        else:
+            return None

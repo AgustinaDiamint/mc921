@@ -1,3 +1,6 @@
+from semantic import uCType, SymbolTable
+
+
 class NodeVisitor(object):
     """ A base NodeVisitor class for visiting uc_ast nodes.
         Subclass it and define your own visit_XXX methods, where
@@ -68,11 +71,11 @@ class Visitor(NodeVisitor):
         self.symtab = SymbolTable()
 
         # Add built-in type names (int, float, char) to the symbol table
-        self.symtab.add("int",uctype.int_type)
-        self.symtab.add("float",uctype.float_type)
-        self.symtab.add("char",uctype.char_type)
+        self.symtab.add("int", uCType.int_type)
+        self.symtab.add("float", uCType.float_type)
+        self.symtab.add("char", uCType.char_type)
 
-    def visit_Program(self,node):
+    def visit_Program(self, node):
         # 1. Visit all of the global declarations
         # 2. Record the associated symbol table
         for _decl in node.gdecls:
@@ -87,9 +90,9 @@ class Visitor(NodeVisitor):
         node.type = node.left.type
 
     def visit_Assignment(self, node):
-        ## 1. Make sure the location of the assignment is defined
+        # 1. Make sure the location of the assignment is defined
         sym = self.symtab.lookup(node.location)
         assert sym, "Assigning to unknown sym"
-        ## 2. Check that the types match
+        # 2. Check that the types match
         self.visit(node.value)
         assert sym.type == node.value.type, "Type mismatch in assignment"

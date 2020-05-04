@@ -1,6 +1,6 @@
 class uCType(object):
     """
-    Class that represents a type in the uC language.  Types 
+    Class that represents a type in the uC language.  Types
     are declared as singleton instances of this type.
     """
 

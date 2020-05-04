@@ -295,7 +295,8 @@ class Constant(Node):
 
 
 class Decl(Node):
-    __slots__ = ('name', 'type', 'init', 'coord')
+    __slots__ = ("name", "type", "init", "coord")
+
     def __init__(self, name, type, init, coord=None):
         self.name = name
         self.type = type
@@ -304,11 +305,13 @@ class Decl(Node):
 
     def children(self):
         nodelist = []
-        if self.type is not None: nodelist.append(("type", self.type))
-        if self.init is not None: nodelist.append(("init", self.init))
+        if self.type is not None:
+            nodelist.append(("type", self.type))
+        if self.init is not None:
+            nodelist.append(("init", self.init))
         return tuple(nodelist)
 
-    attr_names = ('name', )
+    attr_names = ("name",)
 
 
 class DeclList(Node):
@@ -427,7 +430,9 @@ class FuncDef(Node):
         "coord",
     )
 
-    def __init__(self, type, declarator, declaration_list, compound_statement, coord=None):
+    def __init__(
+        self, type, declarator, declaration_list, compound_statement, coord=None
+    ):
         self.type = type
         self.declarator = declarator
         self.declaration_list = declaration_list

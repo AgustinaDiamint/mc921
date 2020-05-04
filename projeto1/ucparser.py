@@ -268,9 +268,7 @@ class UCParser:
                                  | unary_expression assignment_operator assignment_expression
         """
         p[0] = (
-            p[1]
-            if len(p) == 2
-            else ast.Assignment(p[2], p[1], p[3], coord=p[1].coord)
+            p[1] if len(p) == 2 else ast.Assignment(p[2], p[1], p[3], coord=p[1].coord)
         )
 
     def p_argument_expression(self, p):

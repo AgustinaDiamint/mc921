@@ -10,12 +10,12 @@
 
 import sys
 from contextlib import contextmanager
-from ucparser import UCParser
+from uc_parser import UCParser
+from uc_sema import Visitor
 
 """
 One of the most important (and difficult) parts of writing a compiler
-is reliable reporting of error messages back to the user.  This filec
-
+is reliable reporting of error messages back to the user.  This file
 defines some generic functionality for dealing with errors throughout
 the compiler project. Error handling is based on a subscription/logging
 based approach.
@@ -120,14 +120,30 @@ class Compiler:
         """
         self.parser = UCParser()
         self.ast = self.parser.parse(self.code, "", debug)
-        if susy:
-            self.ast.show(showcoord=True)
-        elif ast_file is not None:
-            self.ast.show(buf=ast_file, showcoord=True)
+        # if susy:
+        #    self.ast.show(showcoord=True)
+        # elif ast_file is not None:
+        #    self.ast.show(buf=ast_file, showcoord=True)
+
+    def _sema(self, susy, ast_file):
+        """ Decorate AST with semantic actions. If ast_file != None,
+            or running at susy machine,
+            prints out the abstract syntax tree. """
+        try:
+            self.sema = Visitor()
+            self.sema.visit(self.ast)
+            if susy:
+                self.ast.show(showcoord=True)
+            elif ast_file is not None:
+                self.ast.show(buf=ast_file, showcoord=True)
+        except AssertionError as e:
+            error(None, e)
 
     def _do_compile(self, susy, ast_file, debug):
         """ Compiles the code to the given file object. """
         self._parse(susy, ast_file, debug)
+        if not errors_reported():
+            self._sema(susy, ast_file)
 
     def compile(self, code, susy, ast_file, debug):
         """ Compiles the given code string """

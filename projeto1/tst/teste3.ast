@@ -1,38 +1,38 @@
 Program: 
     FuncDef: 
-        Type: int   @ 1:1
-        Decl: 
+        Type: ['int']   @ 1:1
+        Decl: ID(name='f'  )
             FuncDecl: 
                 ParamList: 
-                    Decl: 
+                    Decl: ID(name='n'  )
                         VarDecl: 
                             Type: ['int']   @ 1:7
-                    Decl: 
+                    Decl: ID(name='k'  )
                         VarDecl: 
                             Type: ['int']   @ 1:14
                 VarDecl: 
                     Type: ['int']   @ 1:1
-        Compound:    @ 1:21
-            Decl: 
+        Compound:    @ 1:1
+            Decl: ID(name='p'  )
                 VarDecl: 
                     Type: ['int']   @ 2:5
-            Decl: 
+            Decl: ID(name='q'  )
                 VarDecl: 
                     Type: ['int']   @ 2:5
-            Decl: 
+            Decl: ID(name='t'  )
                 VarDecl: 
                     Type: ['int']   @ 2:5
             If:    @ 3:5
                 BinaryOp: <   @ 3:9
                     ID: n   @ 3:9
                     Constant: int, 2   @ 3:13
-                Compound:    @ 3:16
+                Compound:    @ 3:1
                     Assignment: =   @ 4:9
                         ID: k   @ 4:9
                         Constant: int, 0   @ 4:13
                     Return:    @ 5:9
                         ID: n   @ 5:16
-                Compound:    @ 7:10
+                Compound:    @ 7:1
                     Assignment: =   @ 8:9
                         ID: t   @ 8:9
                         BinaryOp: +   @ 8:13
@@ -60,13 +60,13 @@ Program:
                     Return:    @ 10:9
                         ID: t   @ 10:16
     FuncDef: 
-        Type: int   @ 14:1
-        Decl: 
+        Type: ['int']   @ 14:1
+        Decl: ID(name='main'  )
             FuncDecl: 
                 VarDecl: 
                     Type: ['int']   @ 14:1
-        Compound:    @ 14:12
-            Decl: 
+        Compound:    @ 14:1
+            Decl: ID(name='m'  )
                 VarDecl: 
                     Type: ['int']   @ 15:5
                 Constant: int, 9   @ 15:13

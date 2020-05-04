@@ -1,7 +1,0 @@
-Program: 
-    GlobalDecl: 
-        Decl: 
-            FuncDecl: 
-                ParamList: 
-                VarDecl: 
-                    Type: ['int']   @ 1:1

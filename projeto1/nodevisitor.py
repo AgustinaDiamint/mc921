@@ -75,19 +75,18 @@ class Visitor(NodeVisitor):
         self.symtab.add("float", uCType.float_type)
         self.symtab.add("char", uCType.char_type)
 
-    def visit_Program(self, node):
-        # 1. Visit all of the global declarations
-        # 2. Record the associated symbol table
-        for _decl in node.gdecls:
-            self.visit(_decl)
+    def visit_ArrayDecl(self,node):
+        #talvez tenha que checar tipos
+        self.visit(node.decl)
+        self.visit(node.type)
+    
+    def visit_ArrayRef(self, node):
+        #se array ref existe: 
+        self.visit(node.array)
+        self.visit(node.idx)
 
-    def visit_BinaryOp(self, node):
-        # 1. Make sure left and right operands have the same type
-        # 2. Make sure the operation is supported
-        # 3. Assign the result type
-        self.visit(node.left)
-        self.visit(node.right)
-        node.type = node.left.type
+    def visit_Assert(self, node):
+        pass
 
     def visit_Assignment(self, node):
         # 1. Make sure the location of the assignment is defined
@@ -96,3 +95,91 @@ class Visitor(NodeVisitor):
         # 2. Check that the types match
         self.visit(node.value)
         assert sym.type == node.value.type, "Type mismatch in assignment"
+
+    def visit_BinaryOp(self, node):
+        # 1. Make sure left and right operands have the same type
+        # 2. Make sure the operation is supported
+        # 3. Assign the result type
+        self.visit(node.left)
+        self.visit(node.right)
+        node.type = node.left.type
+    
+    def visit_Break(self, node):
+        pass
+
+    def visit_Cast(self, node):
+        pass
+
+    def visit_Compound(self,node):
+        pass
+
+    def visit_Constant(self, node):
+        pass
+
+    def visit_Decl(self, node):
+        pass
+
+    def visit_DeclList(self, node):
+        pass
+
+    #empty statement nao precisa ser checado
+
+    def visit_ExprList(self, node):
+        pass
+
+    def visit_For(self, node):
+        pass
+
+    def visit_FuncCall(self, node):
+        pass
+
+    def visit_FuncDecl(self, node):
+        pass
+
+    def visit_FuncDef(self, node):
+        pass
+
+    def visit_GlobalDecl(self, node):
+        pass
+
+    def visit_ID(self, node):
+        pass
+    
+    def visit_If(self, node):
+        pass
+
+    def visit_InitList(self, node):
+        pass
+
+    def visit_ParamList(self, node):
+        pass
+
+    def visit_Print(self, node):
+        pass
+
+    def visit_PtrDecl(self,node):
+        pass
+
+    def visit_Program(self, node):
+        # 1. Visit all of the global declarations
+        # 2. Record the associated symbol table
+        for _decl in node.gdecls:
+            self.visit(_decl)
+    
+    def visit_Read(self,node):
+        pass
+
+    def visit_Return(self,node):
+        pass
+
+    def visit_Type(self,node):
+        pass
+
+    def visit_UnaryOp(self,node):
+        pass
+
+    def visit_VarDecl(self,node):
+        pass
+
+    def visit_While(self,node):
+        pass

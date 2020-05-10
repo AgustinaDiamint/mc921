@@ -10,8 +10,8 @@
 
 import sys
 from contextlib import contextmanager
-from uc_parser import UCParser
-from uc_sema import Visitor
+from ucparser import UCParser
+from semantic import Visitor
 
 """
 One of the most important (and difficult) parts of writing a compiler

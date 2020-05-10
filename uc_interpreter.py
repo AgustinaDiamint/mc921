@@ -43,37 +43,44 @@ class Interpreter(object):
     def __init__(self):
         global inputline, M
         inputline = []
-        M = 10000 * [None]      # Memory for global & local vars
+        M = 10000 * [None]  # Memory for global & local vars
 
-        self.globals = {}       # Dictionary of address of global vars & constants
-        self.vars = {}          # Dictionary of address of local vars relative to sp
+        self.globals = {}  # Dictionary of address of global vars & constants
+        self.vars = {}  # Dictionary of address of local vars relative to sp
 
-        self.offset = 0         # offset (index) of local & global vars. Note that
-                                # each instance of var has absolute address in Memory
-        self.stack = []         # Stack to save address of vars between calls
-        self.sp = []            # Stack to save & restore the last offset
+        self.offset = 0  # offset (index) of local & global vars. Note that
+        # each instance of var has absolute address in Memory
+        self.stack = []  # Stack to save address of vars between calls
+        self.sp = []  # Stack to save & restore the last offset
 
-        self.params = []        # List of parameters from caller (address)
-        self.result = None      # Result Value (address) from the callee
+        self.params = []  # List of parameters from caller (address)
+        self.result = None  # Result Value (address) from the callee
 
-        self.registers = []     # Stack of register names (in the caller) to return value
-        self.returns = []       # Stack of return addresses (program counters)
+        self.registers = []  # Stack of register names (in the caller) to return value
+        self.returns = []  # Stack of return addresses (program counters)
 
-        self.pc = 0             # Program Counter
-        self.start = 0          # PC of the main function
+        self.pc = 0  # Program Counter
+        self.start = 0  # PC of the main function
         self.code = None
 
     def _extract_operation(self, source):
         _modifier = {}
-        _aux = source.split('_')
-        if _aux[0] not in {'fptosi', 'sitofp', 'label', 'jump', 'cbranch',
-                           'define', 'call'}:
-            _opcode = _aux[0] + '_' + _aux[1]
+        _aux = source.split("_")
+        if _aux[0] not in {
+            "fptosi",
+            "sitofp",
+            "label",
+            "jump",
+            "cbranch",
+            "define",
+            "call",
+        }:
+            _opcode = _aux[0] + "_" + _aux[1]
             for i, _val in enumerate(_aux[2:]):
                 if _val.isdigit():
-                    _modifier['dim' + str(i)] = _val
-                elif _val == '*':
-                    _modifier['ptr' + str(i)] = _val
+                    _modifier["dim" + str(i)] = _val
+                elif _val == "*":
+                    _modifier["ptr" + str(i)] = _val
         else:
             _opcode = _aux[0]
         return (_opcode, _modifier)
@@ -85,7 +92,7 @@ class Interpreter(object):
             _value = [item for sublist in value for item in sublist]
         else:
             _value = value
-        M[address:address+size] = _value
+        M[address : address + size] = _value
 
     def run(self, ircode):
         """
@@ -106,7 +113,7 @@ class Interpreter(object):
                 break
             if not op[0].isdigit():
                 opcode, modifier = self._extract_operation(op[0])
-                if opcode.startswith('global'):
+                if opcode.startswith("global"):
                     self.globals[op[1]] = self.offset
                     # get the size of global var
                     if not modifier:
@@ -123,12 +130,12 @@ class Interpreter(object):
                         if len(op) == 3:
                             self._copy_data(self.offset, _len, op[2])
                         self.offset += _len
-                elif opcode == 'define':
-                        self.globals[op[1]] = self.offset
-                        M[self.offset] = self.pc
-                        self.offset += 1
-                        if op[1] == '@main':
-                            self.start = self.pc
+                elif opcode == "define":
+                    self.globals[op[1]] = self.offset
+                    M[self.offset] = self.pc
+                    self.offset += 1
+                    if op[1] == "@main":
+                        self.start = self.pc
             self.pc += 1
 
         # Now, running the program starting from the main function
@@ -145,7 +152,7 @@ class Interpreter(object):
                     if not modifier:
                         getattr(self, "run_" + opcode)(*op[1:])
                     else:
-                        getattr(self, "run_" + opcode + '_')(*op[1:], **modifier)
+                        getattr(self, "run_" + opcode + "_")(*op[1:], **modifier)
                 else:
                     print("Warning: No run_" + opcode + "() method", flush=True)
 
@@ -160,11 +167,11 @@ class Interpreter(object):
             try:
                 _opcode = self.code[_lpc][0]
                 _lpc += 1
-                if _opcode == 'define':
+                if _opcode == "define":
                     break
                 elif _opcode.isdigit():
                     # labels don't go to memory, just in the dictionary
-                    self.vars['%' + _opcode] = _lpc
+                    self.vars["%" + _opcode] = _lpc
             except IndexError:
                 break
 
@@ -176,7 +183,7 @@ class Interpreter(object):
             self.offset += 1
 
     def _get_address(self, source):
-        if source.startswith('@'):
+        if source.startswith("@"):
             return self.globals[source]
         else:
             return self.vars[source]
@@ -192,7 +199,7 @@ class Interpreter(object):
             inputline = inputline[:-1].strip().split()
 
     def _get_value(self, source):
-        if source.startswith('@'):
+        if source.startswith("@"):
             return M[self.globals[source]]
         else:
             return M[self.vars[source]]
@@ -214,13 +221,13 @@ class Interpreter(object):
         idx = -1
         for idx, val in enumerate(self.params):
             # Note that arrays (size >=1) are passed by reference only.
-            self.vars['%' + str(idx)] = self.offset
+            self.vars["%" + str(idx)] = self.offset
             M[self.offset] = M[val]
             self.offset += 1
         self.params = []
 
         # alloc register to the return value & initialize it with 0.
-        self.vars['%' + str(idx+1)] = self.offset
+        self.vars["%" + str(idx + 1)] = self.offset
         M[self.offset] = 0
         self.offset += 1
 
@@ -249,7 +256,7 @@ class Interpreter(object):
                 sys.exit(M[target])
 
     def _store_deref(self, target, value):
-        if target.startswith('@'):
+        if target.startswith("@"):
             M[M[self.globals[target]]] = value
         else:
             M[M[self.vars[target]]] = value
@@ -257,15 +264,15 @@ class Interpreter(object):
     def _store_multiple_values(self, dim, target, value):
         _left = self._get_address(target)
         _right = self._get_address(value)
-        if value.startswith('@'):
+        if value.startswith("@"):
             if isinstance(M[_right], str):
                 _value = list(M[_right])
-                M[_left:_left+dim] = _value
+                M[_left : _left + dim] = _value
                 return
-        M[_left:_left+dim] = M[_right:_right+dim]
+        M[_left : _left + dim] = M[_right : _right + dim]
 
     def _store_value(self, target, value):
-        if target.startswith('@'):
+        if target.startswith("@"):
             M[self.globals[target]] = value
         else:
             M[self.vars[target]] = value
@@ -286,7 +293,7 @@ class Interpreter(object):
             if arg.isdigit():
                 _dim *= int(arg)
         self.vars[varname] = self.offset
-        M[self.offset:self.offset + _dim] = _dim * [0]
+        M[self.offset : self.offset + _dim] = _dim * [0]
         self.offset += _dim
 
     run_alloc_float_ = run_alloc_int_
@@ -299,7 +306,7 @@ class Interpreter(object):
         # save the return pc in the return stack
         self.returns.append(self.pc)
         # jump to the calle function
-        if source.startswith('@'):
+        if source.startswith("@"):
             self.pc = M[self.globals[source]]
         else:
             self.pc = M[self.vars[source]]
@@ -312,10 +319,10 @@ class Interpreter(object):
 
     # Enter the function
     def run_define(self, source):
-        if source == '@main':
+        if source == "@main":
             # alloc register to the return value but not initialize it.
             # We use the "None" value to check if main function returns void.
-            self._alloc_reg('%0')
+            self._alloc_reg("%0")
             # alloc the labels with respective pc's
             self._alloc_labels()
         else:
@@ -369,7 +376,7 @@ class Interpreter(object):
         for arg in kwargs.values():
             if arg.isdigit():
                 _dim *= int(arg)
-            elif arg == '*':
+            elif arg == "*":
                 _ref += 1
         if _ref == 0:
             self._load_multiple_values(_dim, varname, target)
@@ -443,7 +450,7 @@ class Interpreter(object):
     run_return_char = run_return_int
 
     def run_return_void(self):
-        self._pop(M[self.vars['%0']])
+        self._pop(M[self.vars["%0"]])
 
     def run_store_int(self, source, target):
         self._store_value(target, self._get_value(source))
@@ -458,7 +465,7 @@ class Interpreter(object):
         for arg in kwargs.values():
             if arg.isdigit():
                 _dim *= int(arg)
-            elif arg == '*':
+            elif arg == "*":
                 _ref += 1
         if _ref == 0:
             self._store_multiple_values(_dim, target, source)

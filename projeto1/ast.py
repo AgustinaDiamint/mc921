@@ -207,13 +207,14 @@ class Assignment(Node):
 
 
 class BinaryOp(Node):
-    __slots__ = ("op", "lvalue", "rvalue", "coord")
+    __slots__ = ("op", "lvalue", "rvalue", "coord", "type")
 
-    def __init__(self, op, left, right, coord=None):
+    def __init__(self, op, left, right, type=None, coord=None):
         self.op = op
         self.lvalue = left
         self.rvalue = right
         self.coord = coord
+        self.type = type
 
     def children(self):
         nodelist = []
@@ -694,7 +695,6 @@ def _repr(obj):
         return "[" + (",\n ".join((_repr(e).replace("\n", "\n ") for e in obj))) + "\n]"
     else:
         return repr(obj)
-
 
 
 """

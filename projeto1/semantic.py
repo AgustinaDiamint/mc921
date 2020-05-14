@@ -133,17 +133,18 @@ class Visitor(NodeVisitor):
     def __init__(self):
         # Initialize the symbol table
         self.symtab = SymbolTable()
-
-        # Add built-in type names (int, float, char) to the symbol table
-        self.symtab.add("int", IntType)
-        self.symtab.add("float", FloatType)
-        self.symtab.add("char", CharType)
+        self.typechecker = [IntType, FloatType, CharType, ArrayType]
+   
+    def checkType(self, type1):
+        for elem_type in typechecker:
+            if elem_type.typename == type1:
+                return type1
 
     def visit_ArrayDecl(self, node):
         # talvez tenha que checar tipos
         self.visit(node.decl)
         self.visit(node.type)
-        type = self.symtab.lookup(node.type)
+        type = checkType(node.type)
         assert type, "Unknown type"
         self.symtab.add(node.decl, type)
 

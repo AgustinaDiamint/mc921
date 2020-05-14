@@ -147,13 +147,13 @@ class ArrayDecl(Node):
 
 
 class ArrayRef(Node):
-    __slots__ = ("array", "idx", "coord")
+    __slots__ = ("array", "type", "idx", "coord")
 
-    def __init__(self, array, idx, coord=None):
+    def __init__(self, array, idx, type=type, coord=None):
         self.array = array
         self.idx = idx
         self.coord = coord
-
+        self.type = type
     def children(self):
         nodelist = []
         if self.array is not None:
@@ -166,11 +166,12 @@ class ArrayRef(Node):
 
 
 class Assert(Node):
-    __slots__ = ("expr", "coord")
+    __slots__ = ("type", "expr", "coord")
 
-    def __init__(self, expr, coord=None):
+    def __init__(self, expr, type=type, coord=None):
         self.expr = expr
         self.coord = coord
+        self.type = type
 
     def children(self):
         nodelist = []
@@ -259,12 +260,13 @@ class Cast(Node):
 
 
 class Compound(Node):
-    __slots__ = ("declaration_list", "statement_list", "coord")
+    __slots__ = ("declaration_list", "statement_list", "coord", "type")
 
-    def __init__(self, declaration_list, statement_list, coord=None):
+    def __init__(self, declaration_list, statement_list, coord=None, type=type):
         self.declaration_list = declaration_list
         self.statement_list = statement_list
         self.coord = coord
+        self.type = type
 
     def children(self):
         nodelist = []
@@ -316,11 +318,12 @@ class Decl(Node):
 
 
 class DeclList(Node):
-    __slots__ = ("decls", "coord")
+    __slots__ = ("decls", "coord", "type")
 
-    def __init__(self, decls, coord=None):
+    def __init__(self, decls, coord=None, type=type):
         self.decls = decls
         self.coord = coord
+        self.type = type
 
     def children(self):
         nodelist = []
@@ -344,11 +347,12 @@ class EmptyStatement(Node):
 
 
 class ExprList(Node):
-    __slots__ = ("expr", "coord")
+    __slots__ = ("expr", "coord", "type")
 
-    def __init__(self, expr, coord=None):
+    def __init__(self, expr, coord=None, type=type):
         self.expr = expr
         self.coord = coord
+        self.type = type
 
     def children(self):
         nodelist = []
@@ -360,15 +364,15 @@ class ExprList(Node):
 
 
 class For(Node):
-    __slots__ = ("init", "cond", "step", "stmt", "coord")
+    __slots__ = ("init", "cond", "step", "stmt", "coord", "type")
 
-    def __init__(self, init, cond, step, stmt, coord=None):
+    def __init__(self, init, cond, step, stmt, coord=None, type=type):
         self.init = init
         self.cond = cond
         self.step = step
         self.stmt = stmt
         self.coord = coord
-
+        self.type = type
     def children(self):
         nodelist = []
         if self.init is not None:
@@ -385,12 +389,13 @@ class For(Node):
 
 
 class FuncCall(Node):
-    __slots__ = ("name", "args", "coord")
+    __slots__ = ("name", "args", "coord", "type")
 
-    def __init__(self, name, args, coord=None):
+    def __init__(self, name, args, coord=None, type=type):
         self.name = name
         self.args = args
         self.coord = coord
+        self.type = type
 
     def children(self):
         nodelist = []
@@ -472,11 +477,12 @@ class GlobalDecl(Node):
 
 
 class ID(Node):
-    __slots__ = ("name", "coord")
+    __slots__ = ("name", "coord", "type")
 
     def __init__(self, name, coord=None):
         self.name = name
         self.coord = coord
+        self.type = type
 
     def children(self):
         nodelist = []
@@ -486,7 +492,7 @@ class ID(Node):
 
 
 class If(Node):
-    __slots__ = ("cond", "if_true", "if_false", "coord")
+    __slots__ = ("cond", "if_true", "if_false", "coord", "type" )
 
     def __init__(self, cond, if_true, if_false, coord=None):
         self.cond = cond
@@ -508,11 +514,12 @@ class If(Node):
 
 
 class InitList(Node):
-    __slots__ = ("initializer", "coord")
+    __slots__ = ("initializer", "coord",  "type")
 
-    def __init__(self, initializer, coord=None):
+    def __init__(self, initializer, coord=None, type=type):
         self.initializer = initializer
         self.coord = coord
+        self.type = type
 
     def children(self):
         nodelist = []
@@ -525,11 +532,12 @@ class InitList(Node):
 
 class ParamList(Node):
 
-    __slots__ = ("parameter", "coord")
+    __slots__ = ("parameter", "coord", "type")
 
     def __init__(self, parameter, coord=None):
         self.parameter = parameter
         self.coord = coord
+        self.type = type
 
     def children(self):
         nodelist = []
@@ -541,11 +549,12 @@ class ParamList(Node):
 
 
 class Print(Node):
-    __slots__ = ("expression", "coord")
+    __slots__ = ("expression", "coord", "type")
 
-    def __init__(self, expression, coord=None):
+    def __init__(self, expression, coord=None, type=type):
         self.expression = expression
         self.coord = coord
+        self.type = type
 
     def children(self):
         nodelist = []
@@ -557,12 +566,12 @@ class Print(Node):
 
 
 class PtrDecl(Node):
-    __slots__ = ("pointer", "coord")
+    __slots__ = ("pointer", "coord", "type")
 
-    def __init__(self, pointer, coord=None):
+    def __init__(self, pointer, coord=None, type=type):
         self.pointer = pointer
         self.coord = coord
-
+        self.type = type
     def children(self):
         nodelist = []
         if self.pointer is not None:
@@ -605,11 +614,12 @@ class Read(Node):
 
 
 class Return(Node):
-    __slots__ = ("expression", "coord")
+    __slots__ = ("expression", "coord", "type")
 
-    def __init__(self, expression, coord=None):
+    def __init__(self, expression, coord=None, type=type):
         self.coord = coord
         self.expression = expression
+        self.type = type
 
     def children(self):
         nodelist = []
@@ -635,12 +645,13 @@ class Type(Node):
 
 
 class UnaryOp(Node):
-    __slots__ = ("operator", "expr", "coord")
+    __slots__ = ("operator", "expr", "coord", "type")
 
-    def __init__(self, operator, expr, coord=None):
+    def __init__(self, operator, expr, coord=None, type=type):
         self.operator = operator
         self.expr = expr
         self.coord = coord
+        self.type = type
 
     def children(self):
         nodelist = []

@@ -240,7 +240,7 @@ class Visitor(NodeVisitor):
         self.vist(node.type)
         self.visit(node.declarator)
         for decls in node.declaration_list:
-            self.visit(decls)
+            self.visit(decls)   
         self.visit(node.compound_statement)
         sym = self.systab.lookup(node.declarator)
         assert (
@@ -292,3 +292,4 @@ class Visitor(NodeVisitor):
 
     def visit_While(self, node):
         pass
+    

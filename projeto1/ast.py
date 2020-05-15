@@ -154,6 +154,7 @@ class ArrayRef(Node):
         self.idx = idx
         self.coord = coord
         self.type = type
+
     def children(self):
         nodelist = []
         if self.array is not None:
@@ -373,6 +374,7 @@ class For(Node):
         self.stmt = stmt
         self.coord = coord
         self.type = type
+
     def children(self):
         nodelist = []
         if self.init is not None:
@@ -492,7 +494,7 @@ class ID(Node):
 
 
 class If(Node):
-    __slots__ = ("cond", "if_true", "if_false", "coord", "type" )
+    __slots__ = ("cond", "if_true", "if_false", "coord", "type")
 
     def __init__(self, cond, if_true, if_false, coord=None):
         self.cond = cond
@@ -514,7 +516,7 @@ class If(Node):
 
 
 class InitList(Node):
-    __slots__ = ("initializer", "coord",  "type")
+    __slots__ = ("initializer", "coord", "type")
 
     def __init__(self, initializer, coord=None, type=type):
         self.initializer = initializer
@@ -572,6 +574,7 @@ class PtrDecl(Node):
         self.pointer = pointer
         self.coord = coord
         self.type = type
+
     def children(self):
         nodelist = []
         if self.pointer is not None:

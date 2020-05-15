@@ -38,7 +38,7 @@ class UCParser:
         p[0] = [p[1]] if len(p) == 2 else p[1] + [p[2]]
 
     def p_global_declaration_1(self, p):
-        """global_declaration : function_definition
+        """global_dePclaration : function_definition
         """
         p[0] = p[1]
 

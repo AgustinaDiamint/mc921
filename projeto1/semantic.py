@@ -133,18 +133,33 @@ class Visitor(NodeVisitor):
     def __init__(self):
         # Initialize the symbol table
         self.symtab = SymbolTable()
-        self.typechecker = [IntType, FloatType, CharType, ArrayType]
-   
+        self.typedict = {
+            "int": IntType,
+            "float": FloatType,
+            "char": CharType,
+            "array": ArrayType,
+        }
+        self.pointer = 0
+        self.sym_stack = [self.symtab]
+
     def checkType(self, type1):
-        for elem_type in typechecker:
-            if elem_type.typename == type1:
-                return type1
+        return self.typedict.get(type1)
+
+    def checkVariableType(self, variable):
+        for tab in self.sym_stack[::-1]:
+            if variable.name in tab:
+                assert tab.get(variable.name).type == variable.type, "Type mismatch"
+                break
+        AssertionError("Variable not declared")
+
+    def checkDeclaration(self, variable):
+        assert variable.name not in self.sym_stack[-1], "variable already declared"
 
     def visit_ArrayDecl(self, node):
         # talvez tenha que checar tipos
         self.visit(node.decl)
         self.visit(node.type)
-        type = checkType(node.type)
+        type = self.checkType(node.type)
         assert type, "Unknown type"
         self.symtab.add(node.decl, type)
 
@@ -207,13 +222,17 @@ class Visitor(NodeVisitor):
             self.symtab.add(node.value, type)
 
     def visit_Decl(self, node):
-        self.visit(node.init)
+        # checamos se a variavel ja existe
+        # depois checamos o tipo declarado
+        # depois adicionamos ao symtable
+        varname = node.name.name
+        self.checkDeclaration(varname)
         self.visit(node.type)
-        type = self.symtab.lookup(node.type)
-        assert type, "Unknown type"
-        init = self.symtab.lookup(node.init)
-        assert type == init.typename, "Type mismatch in decl"
-        self.symtab.add(node.init, type)
+        vartype = node.type.names
+        self.checkType(vartype)
+        self.sym_stack[-1][varname] = vartype
+
+        self.visit(node.init)
 
     def visit_DeclList(self, node):
         for _decl in node.decls:
@@ -225,7 +244,7 @@ class Visitor(NodeVisitor):
         for _decl in node.expr:
             self.visit(_decl)
 
-    # For gereric
+    # For generic
 
     def visit_FuncCall(self, node):
         self.visit(node.name)
@@ -241,7 +260,7 @@ class Visitor(NodeVisitor):
         self.vist(node.type)
         self.visit(node.declarator)
         for decls in node.declaration_list:
-            self.visit(decls)   
+            self.visit(decls)
         self.visit(node.compound_statement)
         sym = self.systab.lookup(node.declarator)
         assert (
@@ -293,4 +312,3 @@ class Visitor(NodeVisitor):
 
     def visit_While(self, node):
         pass
-    
